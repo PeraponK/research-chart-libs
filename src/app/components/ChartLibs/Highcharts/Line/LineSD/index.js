@@ -138,16 +138,6 @@ export const LineSD = () => {
           // ],
           zoneAxis: "x",
           zones: zones,
-
-          // zones: [
-          //   { color: "#F075AA" },
-          //   { value: 0, color: "#102C57" },
-          //   { value: 150, color: "#ADD899" },
-          //   {
-          //     value: 200,
-          //     color: "#FF0000",
-          //   },
-          // ],
         },
         {
           // type: "area",
@@ -160,16 +150,6 @@ export const LineSD = () => {
           // ],
           zoneAxis: "x",
           zones: zones,
-
-          // zones: [
-          //   { color: "#F075AA" },
-          //   { value: 0, color: "#102C57" },
-          //   { value: 150, color: "#ADD899" },
-          //   {
-          //     value: 200,
-          //     color: "#FF0000",
-          //   },
-          // ],
         },
       ],
       legend: {
