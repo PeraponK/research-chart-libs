@@ -2,6 +2,7 @@ import HighchartsReact from "highcharts-react-official";
 import React, { useMemo, useState } from "react";
 import Highcharts, { Legend, chart, charts, color } from "highcharts";
 import HighchartsBoost from "highcharts/modules/boost";
+import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
 // let data2 = [[base, Math.random() * 300]];
 // for (let i = 1; i < 500; i++) {
 //   let now = new Date((base += oneDay));
@@ -10,12 +11,13 @@ import HighchartsBoost from "highcharts/modules/boost";
 
 export const LinePlot = () => {
   HighchartsBoost(Highcharts);
+  HighchartsZoom(Highcharts);
   const getData = () => {
     let base = +new Date(1988, 9, 3);
     let oneDay = 24 * 3600 * 1000;
     const genData = useMemo(() => {
       let data = [[base, Math.random() * 300]];
-      for (let i = 1; i < 5000; i++) {
+      for (let i = 1; i < 50000; i++) {
         let now = new Date((base += oneDay));
         data.push([
           +now,
@@ -55,10 +57,11 @@ export const LinePlot = () => {
 
   //range data
   const [range, setRange] = useState([
-    // { id: 1, minRange: 1, maxRange: 2 },
-    // { id: 2, minRange: 4, maxRange: 6 },
-    // { id: 3, minRange: 8, maxRange: 10 },
+    { id: 2, minRange: 4, maxRange: 6 },
+    { id: 1, minRange: 1, maxRange: 2 },
+    { id: 3, minRange: 8, maxRange: 10 },
   ]);
+
   //population data
   const [pop, setPop] = useState([
     {
@@ -130,6 +133,7 @@ export const LinePlot = () => {
       value: item.maxRange,
     },
   ]);
+  const sortZone = zones.sort((a, b) => (a.value || 0) - (b.value || 0));
   //options for highchart
   let options = useMemo(() => {
     let options = {
@@ -139,12 +143,16 @@ export const LinePlot = () => {
         seriesThreshold: 5,
       },
       chart: {
-        // zooming: {
-        //   mouseWheel: true,
-        //   type: "xy",
-        // },
+        // renderTo: "container",
+        zooming: {
+          // singleTouch: true,
+          mouseWheel: {
+            type: "x",
+          },
+        },
+
         zoomType: "x",
-        events: { selection: selected },
+        // events: { selection: selected },
         height: 700,
         width: 1500,
       },
@@ -167,91 +175,75 @@ export const LinePlot = () => {
         },
       },
       series: [
-        {
-          name: "data1",
-          data: data1,
-          zones: zones,
-          zoneAxis: "x",
-        },
-        {
-          name: "data2",
-          data: data2,
-          zones: zones,
-          zoneAxis: "x",
-        },
-        {
-          name: "data3",
-          data: data3,
-          zones: zones,
-          zoneAxis: "x",
-        },
-        {
-          name: "data4",
-          data: data4,
-          zones: zones,
-          zoneAxis: "x",
-        },
-        {
-          name: "data5",
-          data: data5,
-          zones: zones,
-          zoneAxis: "x",
-        },
-        {
-          name: "data6",
-          data: data6,
-          zones: zones,
-          zoneAxis: "x",
-        },
-        {
-          name: "data7",
-          data: data7,
-          zones: zones,
-          zoneAxis: "x",
-        },
-        {
-          name: "data8",
-          data: data8,
-          zones: zones,
-          zoneAxis: "x",
-        },
-        {
-          name: "data9",
-          data: data9,
-          zones: zones,
-          zoneAxis: "x",
-        },
-        {
-          name: "data10",
-          data: data10,
-          zones: zones,
-          zoneAxis: "x",
-        },
-
         // {
-        //   type: "area",
-
-        //   data: [
-        //     29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-        //     //   { y: 216.4, marker: { fillColor: "#BF0B23", radius: 2 } },
-        //     194.1, 95.6, 54.4,
-        //   ],
-        //   zoneAxis: "x",
+        //   name: "data1",
+        //   data: data1,
         //   zones: zones,
+        //   zoneAxis: "x",
         // },
-
         // {
-        //   // type: "area",
-        //   name: "second data",
+        //   name: "data2",
         //   data: data2,
-        //   // data: [
-        //   //   29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-        //   //   //   { y: 216.4, marker: { fillColor: "#BF0B23", radius: 2 } },
-        //   //   194.1, 95.6, 54.4,
-        //   // ],
-        //   zoneAxis: "x",
         //   zones: zones,
+        //   zoneAxis: "x",
         // },
+        // {
+        //   name: "data3",
+        //   data: data3,
+        //   zones: zones,
+        //   zoneAxis: "x",
+        // },
+        // {
+        //   name: "data4",
+        //   data: data4,
+        //   zones: zones,
+        //   zoneAxis: "x",
+        // },
+        // {
+        //   name: "data5",
+        //   data: data5,
+        //   zones: zones,
+        //   zoneAxis: "x",
+        // },
+        // {
+        //   name: "data6",
+        //   data: data6,
+        //   zones: zones,
+        //   zoneAxis: "x",
+        // },
+        // {
+        //   name: "data7",
+        //   data: data7,
+        //   zones: zones,
+        //   zoneAxis: "x",
+        // },
+        // {
+        //   name: "data8",
+        //   data: data8,
+        //   zones: zones,
+        //   zoneAxis: "x",
+        // },
+        // {
+        //   name: "data9",
+        //   data: data9,
+        //   zones: zones,
+        //   zoneAxis: "x",
+        // },
+        // {
+        //   name: "data10",
+        //   data: data10,
+        //   zones: zones,
+        //   zoneAxis: "x",
+        // },
+        {
+          data: [
+            29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+            //   { y: 216.4, marker: { fillColor: "#BF0B23", radius: 2 } },
+            194.1, 95.6, 54.4,
+          ],
+          zoneAxis: "x",
+          zones: sortZone,
+        },
       ],
       legend: {
         align: "right",

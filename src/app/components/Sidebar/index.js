@@ -29,7 +29,8 @@ import { Grid, Paper, Slide } from "@mui/material";
 import { ThemeButton } from "../ThemeButton";
 import { Dashboard, Height } from "@mui/icons-material";
 import { HighChart, LinePlot } from "../ChartLibs/Highcharts/Line/LinePlot";
-import { LineSD } from "../ChartLibs/Highcharts/Line/LineSD";
+import ScatterPlot, { LineSD } from "../ChartLibs/Highcharts/Line/LineSD";
+import { HighStock } from "../ChartLibs/Highcharts/Line/HighStock";
 
 const drawerWidth = 200;
 
@@ -228,10 +229,12 @@ export const Sidebar = ({ onChangeTheme, status }, props) => {
         >
           {/*COMPONENT HERE*/}
           <Grid xs={12} sm={12} md={12} lg={12}>
-            <LinePlot />
+            {/* <LinePlot /> */}
+            <HighStock />
           </Grid>
           <Grid xs={12} sm={12} md={12} lg={12}>
-            <LineSD />
+            {/* <LineSD /> */}
+            {/* <ScatterPlot /> */}
           </Grid>
           {/* <Grid xs={12} sm={12} md={12} lg={12}>
             <HighChart />

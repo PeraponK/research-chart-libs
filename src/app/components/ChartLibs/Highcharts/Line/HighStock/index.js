@@ -4,7 +4,7 @@ import React, { useMemo, useState } from "react";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
 
-export const LineSD = () => {
+export const HighStock = () => {
   HighchartsBoost(Highcharts);
   HighchartsZoom(Highcharts);
   const getData = () => {
@@ -66,60 +66,110 @@ export const LineSD = () => {
       value: item.maxRange,
     },
   ]);
-  function calculateStandardDeviation(data) {
-    const n = data.length;
-    const mean = data.reduce((acc, val) => acc + val, 0) / n;
-    const variance =
-      data.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / n;
-    const standardDeviation = Math.sqrt(variance);
-    return standardDeviation;
-  }
-  const data = [10, 20, 30, 25, 35, 45, 40, 50, 60, 55, 65, 70];
-  const standardDeviation = calculateStandardDeviation(data);
+  const sortZone = zones.sort((a, b) => (a.value || 0) - (b.value || 0));
 
   let options = useMemo(() => {
     let options = {
+      boost: {
+        useGPUTranslations: true,
+        seriesThreshold: 5,
+      },
+      chart: {
+        zoomType: "x",
+        events: { selection: selected },
+        height: 700,
+        width: 1500,
+      },
       title: {
-        text: "Historical Chart with Standard Deviation Band",
+        text: "My chart",
       },
-      xAxis: {
-        categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
+      subtitle: {
+        text: "try subtitle",
       },
-      yAxis: {
-        title: {
-          text: "Value",
+      plotOptions: {
+        series: {
+          marker: {
+            enabled: false,
+            states: {
+              hover: {
+                enabled: false,
+              },
+            },
+          },
         },
       },
       series: [
         {
-          name: "Data",
-          data: data,
+          name: "data1",
+          data: data1,
+          zones: sortZone,
+          zoneAxis: "x",
         },
-      ],
-      plotBands: [
         {
-          from: data[data.length - 1] - standardDeviation,
-          to: data[data.length - 1] + standardDeviation,
-          color: "rgba(68, 170, 213, 0.2)",
-          label: {
-            text: "Standard Deviation Band",
-            align: "center",
-          },
+          name: "data2",
+          data: data2,
+          zones: sortZone,
+          zoneAxis: "x",
+        },
+        {
+          name: "data3",
+          data: data3,
+          zones: sortZone,
+          zoneAxis: "x",
+        },
+        {
+          name: "data4",
+          data: data4,
+          zones: sortZone,
+          zoneAxis: "x",
+        },
+        {
+          name: "data5",
+          data: data5,
+          zones: sortZone,
+          zoneAxis: "x",
+        },
+        {
+          name: "data6",
+          data: data6,
+          zones: sortZone,
+          zoneAxis: "x",
+        },
+        {
+          name: "data7",
+          data: data7,
+          zones: sortZone,
+          zoneAxis: "x",
+        },
+        {
+          name: "data8",
+          data: data8,
+          zones: sortZone,
+          zoneAxis: "x",
+        },
+        {
+          name: "data9",
+          data: data9,
+          zones: sortZone,
+          zoneAxis: "x",
+        },
+        {
+          name: "data10",
+          data: data10,
+          zones: sortZone,
+          zoneAxis: "x",
         },
       ],
+      legend: {
+        align: "right",
+      },
+      xAxis: {
+        crosshair: true,
+        plotBands: plotbands,
+      },
+      yAxis: {
+        crosshair: true,
+      },
     };
     return options;
   });
