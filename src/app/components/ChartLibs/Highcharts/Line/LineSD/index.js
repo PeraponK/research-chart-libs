@@ -1,6 +1,6 @@
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
 
@@ -25,15 +25,6 @@ export const LineSD = () => {
   };
 
   let data1 = getData();
-  let data2 = getData();
-  let data3 = getData();
-  let data4 = getData();
-  let data5 = getData();
-  let data6 = getData();
-  let data7 = getData();
-  let data8 = getData();
-  let data9 = getData();
-  let data10 = getData();
 
   const handleAddTemp = (x, y) => {
     const addData = {
@@ -43,8 +34,56 @@ export const LineSD = () => {
     };
     setRange([...range, addData]);
   };
+  useEffect(() => {
+    (function (H) {
+      H.wrap(H.PlotLineOrBand.prototype, "render", function (proceed, lines) {
+        let ret = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        let { start, end } = ret.options,
+          path = ret.svgElem.attr("d").split(" "),
+          // [x1Index, y1Index, x2Index, y2Index] = [1, 2, 4, 5],
+          // [x3Index, y3Index, x4Index, y4Index] = [7, 8, 10, 11],
+          [x1Index, x2Index, x3Index, x4Index] = [1, 4, 7, 10],
+          [y1Index, y2Index, y3Index, y4Index] = [2, 5, 8, 11],
+          isPlotLineVertical =
+            Math.abs(path[x1Index] - path[x2Index]) < 0.00001;
 
+        if (isPlotLineVertical) {
+          if (start) {
+            path[y1Index] = ret.axis.chart.yAxis[0].toPixels(start);
+            path[y4Index] = ret.axis.chart.yAxis[0].toPixels(start);
+          }
+          if (end) {
+            path[y2Index] = ret.axis.chart.yAxis[0].toPixels(end);
+            path[x3Index] = ret.axis.chart.yAxis[0].toPixels(end);
+          }
+        } else {
+          if (start) {
+            path[x1Index] = ret.axis.chart.xAxis[0].toPixels(start);
+            path[x4Index] = ret.axis.chart.xAxis[0].toPixels(start);
+          }
+          if (end) {
+            path[x2Index] = ret.axis.chart.xAxis[0].toPixels(end);
+            path[x3Index] = ret.axis.chart.xAxis[0].toPixels(end);
+          }
+        }
+
+        ret.svgElem.attr({ d: path.join(" ") });
+
+        return ret;
+      });
+    })(Highcharts);
+  }, []);
+
+  const click = (event) => {
+    console.log(...event.yAxis);
+    console.log(...event.xAxis);
+  };
   const selected = (event) => {
+    console.log(new Date(event.xAxis[0].min));
+    console.log(new Date(event.xAxis[0].max));
+    console.log(event);
+    console.log(event.xAxis[0].min);
+    console.log(event.xAxis[0].max);
     event.preventDefault();
     handleAddTemp(event.xAxis[0].min, event.xAxis[0].max);
   };
@@ -66,60 +105,95 @@ export const LineSD = () => {
       value: item.maxRange,
     },
   ]);
-  function calculateStandardDeviation(data) {
-    const n = data.length;
-    const mean = data.reduce((acc, val) => acc + val, 0) / n;
-    const variance =
-      data.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / n;
-    const standardDeviation = Math.sqrt(variance);
-    return standardDeviation;
-  }
-  const data = [10, 20, 30, 25, 35, 45, 40, 50, 60, 55, 65, 70];
-  const standardDeviation = calculateStandardDeviation(data);
+  // console.log(zones);
+  const sortZone = zones.sort((a, b) => (a.value || 0) - (b.value || 0));
 
   let options = useMemo(() => {
     let options = {
+      boost: {
+        useGPUTranslations: true,
+        seriesThreshold: 5,
+      },
+      chart: {
+        zoomType: "x",
+        events: { click: click },
+        height: 700,
+        width: 1500,
+      },
       title: {
-        text: "Historical Chart with Standard Deviation Band",
+        text: "My chart",
       },
-      xAxis: {
-        categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
+      subtitle: {
+        text: "try subtitle",
       },
-      yAxis: {
-        title: {
-          text: "Value",
+      plotOptions: {
+        series: {
+          marker: {
+            enabled: false,
+            states: {
+              hover: {
+                enabled: false,
+              },
+            },
+          },
         },
       },
       series: [
         {
-          name: "Data",
-          data: data,
+          name: "data1",
+          data: data1,
         },
       ],
-      plotBands: [
-        {
-          from: data[data.length - 1] - standardDeviation,
-          to: data[data.length - 1] + standardDeviation,
-          color: "rgba(68, 170, 213, 0.2)",
-          label: {
-            text: "Standard Deviation Band",
-            align: "center",
+      legend: {
+        align: "right",
+      },
+
+      yAxis: {
+        crosshair: true,
+        plotBands: [
+          {
+            from: 1,
+            to: 300,
+            color: "#6FCC9F",
+            start: 1,
+            end: 1324534544321,
           },
+          {
+            from: 300,
+            to: 500,
+            color: "#6FCC9F",
+            start: 1324534544321,
+            end: 2915532330810,
+          },
+          {
+            from: 500,
+            to: 800,
+            color: "#6FCC9F",
+            start: 2915532330810,
+            end: 3594998918918,
+          },
+
+          {
+            from: 500,
+            to: 100,
+            color: "#6FCC9F",
+            start: 3594998918918,
+            end: 4907001600000,
+          },
+        ],
+      },
+      tooltip: {
+        formatter: function () {
+          return (
+            "Date : <b>" +
+            new Date(this.x) +
+            "</b>, value <b>" +
+            this.y +
+            "</b>, in series " +
+            this.series.name
+          );
         },
-      ],
+      },
     };
     return options;
   });

@@ -3,8 +3,10 @@ import Highcharts from "highcharts/highstock";
 import React, { useMemo, useState } from "react";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
+import HighchartsExporting from "highcharts/modules/exporting";
 
 export const HighStock = () => {
+  HighchartsExporting(Highcharts);
   HighchartsBoost(Highcharts);
   HighchartsZoom(Highcharts);
   const getData = () => {
@@ -45,6 +47,11 @@ export const HighStock = () => {
   };
 
   const selected = (event) => {
+    console.log(new Date(event.xAxis[0].min));
+    console.log(new Date(event.xAxis[0].max));
+    console.log(event);
+    console.log(event.xAxis[0].min);
+    console.log(event.xAxis[0].max);
     event.preventDefault();
     handleAddTemp(event.xAxis[0].min, event.xAxis[0].max);
   };
@@ -66,6 +73,7 @@ export const HighStock = () => {
       value: item.maxRange,
     },
   ]);
+  console.log(zones);
   const sortZone = zones.sort((a, b) => (a.value || 0) - (b.value || 0));
 
   let options = useMemo(() => {

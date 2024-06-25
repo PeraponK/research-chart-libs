@@ -3,11 +3,6 @@ import React, { useMemo, useState } from "react";
 import Highcharts, { Legend, chart, charts, color } from "highcharts";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
-// let data2 = [[base, Math.random() * 300]];
-// for (let i = 1; i < 500; i++) {
-//   let now = new Date((base += oneDay));
-//   data2.push([+now, Math.round((Math.random() - 0.5) * 20 + data2[i - 1][1])]);
-// }
 
 export const LinePlot = () => {
   HighchartsBoost(Highcharts);
@@ -28,16 +23,7 @@ export const LinePlot = () => {
     }, [base]);
     return genData;
   };
-  let data1 = getData();
-  let data2 = getData();
-  let data3 = getData();
-  let data4 = getData();
-  let data5 = getData();
-  let data6 = getData();
-  let data7 = getData();
-  let data8 = getData();
-  let data9 = getData();
-  let data10 = getData();
+
   const handleAddTemp = (x, y) => {
     const addData = {
       id: range.length + 1,
@@ -48,6 +34,27 @@ export const LinePlot = () => {
     // console.log(range);
   };
 
+  let dataMarker = [];
+  for (let i = 0; i < 100; i++) {
+    dataMarker.push(Math.floor(Math.random() * 100) + 1);
+  }
+
+  const handleDataMarker = dataMarker.map((item) => {
+    const setMarker = {
+      y: item,
+      marker: {
+        symbol:
+          item > 80
+            ? "triangle"
+            : "url(https://cdn-icons-png.freepik.com/256/272/272340.png?semt=ais_hybrid)",
+        width: 20,
+        height: 20,
+      },
+      alert: item > 80 ? ">=80%" : "<80%",
+    };
+    return setMarker;
+  });
+
   const selected = (event) => {
     event.preventDefault();
     console.log(event);
@@ -57,9 +64,9 @@ export const LinePlot = () => {
 
   //range data
   const [range, setRange] = useState([
-    { id: 2, minRange: 4, maxRange: 6 },
-    { id: 1, minRange: 1, maxRange: 2 },
-    { id: 3, minRange: 8, maxRange: 10 },
+    // { id: 2, minRange: 4, maxRange: 6 },
+    // { id: 1, minRange: 1, maxRange: 2 },
+    // { id: 3, minRange: 8, maxRange: 10 },
   ]);
 
   //population data
@@ -93,7 +100,7 @@ export const LinePlot = () => {
     to: item.maxRange,
   }));
   //console.log(plotbands);
-  //test data
+  //test zones
   const test = [
     {
       color: "#F075AA",
@@ -143,9 +150,7 @@ export const LinePlot = () => {
         seriesThreshold: 5,
       },
       chart: {
-        // renderTo: "container",
         zooming: {
-          // singleTouch: true,
           mouseWheel: {
             type: "x",
           },
@@ -165,84 +170,47 @@ export const LinePlot = () => {
       plotOptions: {
         series: {
           marker: {
-            enabled: false,
+            enabled: true,
             states: {
               hover: {
-                enabled: false,
+                enabled: true,
               },
             },
           },
         },
       },
+      // series: [
+      //   {
+      //     data: [
+      //       29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+      //       //   { y: 216.4, marker: { fillColor: "#BF0B23", radius: 2 } },
+      //       194.1, 95.6, 54.4,
+      //     ],
+      //     zoneAxis: "x",
+      //     zones: sortZone,
+      //   },
+      // ],
       series: [
-        // {
-        //   name: "data1",
-        //   data: data1,
-        //   zones: zones,
-        //   zoneAxis: "x",
-        // },
-        // {
-        //   name: "data2",
-        //   data: data2,
-        //   zones: zones,
-        //   zoneAxis: "x",
-        // },
-        // {
-        //   name: "data3",
-        //   data: data3,
-        //   zones: zones,
-        //   zoneAxis: "x",
-        // },
-        // {
-        //   name: "data4",
-        //   data: data4,
-        //   zones: zones,
-        //   zoneAxis: "x",
-        // },
-        // {
-        //   name: "data5",
-        //   data: data5,
-        //   zones: zones,
-        //   zoneAxis: "x",
-        // },
-        // {
-        //   name: "data6",
-        //   data: data6,
-        //   zones: zones,
-        //   zoneAxis: "x",
-        // },
-        // {
-        //   name: "data7",
-        //   data: data7,
-        //   zones: zones,
-        //   zoneAxis: "x",
-        // },
-        // {
-        //   name: "data8",
-        //   data: data8,
-        //   zones: zones,
-        //   zoneAxis: "x",
-        // },
-        // {
-        //   name: "data9",
-        //   data: data9,
-        //   zones: zones,
-        //   zoneAxis: "x",
-        // },
-        // {
-        //   name: "data10",
-        //   data: data10,
-        //   zones: zones,
-        //   zoneAxis: "x",
-        // },
         {
-          data: [
-            29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-            //   { y: 216.4, marker: { fillColor: "#BF0B23", radius: 2 } },
-            194.1, 95.6, 54.4,
-          ],
-          zoneAxis: "x",
-          zones: sortZone,
+          data: handleDataMarker,
+
+          // data: [
+          //   { y: 5, marker: { symbol: "circle" } },
+          //   { y: 10, marker: { symbol: "square" } },
+          //   { y: 15, marker: { symbol: "diamond" } },
+          //   { y: 20, marker: { symbol: "triangle" } },
+          // ],
+          point: {
+            events: {
+              click: function () {
+                // handleAlert(this.symbol);
+                alert(this.alert);
+              },
+              // click: function () {
+              //   alert("Marker clicked!");
+              // },
+            },
+          },
         },
       ],
       legend: {

@@ -31,6 +31,13 @@ import { Dashboard, Height } from "@mui/icons-material";
 import { HighChart, LinePlot } from "../ChartLibs/Highcharts/Line/LinePlot";
 import ScatterPlot, { LineSD } from "../ChartLibs/Highcharts/Line/LineSD";
 import { HighStock } from "../ChartLibs/Highcharts/Line/HighStock";
+import {
+  LineMark,
+  MarkxAxis,
+} from "../ChartLibs/Highcharts/Line/LineMark/MarkxAxis";
+import { MarkyAxis } from "../ChartLibs/Highcharts/Line/LineMark/MarkyAxis";
+import { LineScale } from "../ChartLibs/Highcharts/Line/LineScale";
+import { Scatter } from "../ChartLibs/Highcharts/Scatter";
 
 const drawerWidth = 200;
 
@@ -185,7 +192,7 @@ export const Sidebar = ({ onChangeTheme, status }, props) => {
               { name: "Highcharts", icon: <Dashboard /> },
               { name: "ChartJS", icon: <MonitorIcon /> },
               { name: "nivo", icon: <AssessmentIcon /> },
-              { name: "Recharts", icon: <SettingsIcon /> },
+              { name: "ploty", icon: <SettingsIcon /> },
               { name: "ApexCharts", icon: <AccountBoxIcon /> },
             ].map((text, index) => (
               <ListItem key={index} disablePadding sx={{ display: "block" }}>
@@ -230,15 +237,15 @@ export const Sidebar = ({ onChangeTheme, status }, props) => {
           {/*COMPONENT HERE*/}
           <Grid xs={12} sm={12} md={12} lg={12}>
             {/* <LinePlot /> */}
-            <HighStock />
+            {/* <HighStock /> */}
+            {/* <LineScale /> */}
+            <Scatter />
           </Grid>
           <Grid xs={12} sm={12} md={12} lg={12}>
             {/* <LineSD /> */}
-            {/* <ScatterPlot /> */}
+            {/* <MarkyAxis />
+            <MarkxAxis /> */}
           </Grid>
-          {/* <Grid xs={12} sm={12} md={12} lg={12}>
-            <HighChart />
-          </Grid> */}
         </Grid>
       </Box>
     </Box>
