@@ -1,6 +1,6 @@
 import HighchartsReact from "highcharts-react-official";
-import Highcharts from "highcharts/highstock";
-import React, { useEffect, useMemo, useState } from "react";
+import Highcharts, { chart } from "highcharts/highstock";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
 
@@ -36,57 +36,105 @@ export const LineSD = () => {
   };
   useEffect(() => {
     (function (H) {
-      H.wrap(H.PlotLineOrBand.prototype, "render", function (proceed, lines) {
-        let ret = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-        let { start, end } = ret.options,
-          path = ret.svgElem.attr("d").split(" "),
-          // [x1Index, y1Index, x2Index, y2Index] = [1, 2, 4, 5],
-          // [x3Index, y3Index, x4Index, y4Index] = [7, 8, 10, 11],
-          [x1Index, x2Index, x3Index, x4Index] = [1, 4, 7, 10],
-          [y1Index, y2Index, y3Index, y4Index] = [2, 5, 8, 11],
-          isPlotLineVertical =
-            Math.abs(path[x1Index] - path[x2Index]) < 0.00001;
-
-        if (isPlotLineVertical) {
-          if (start) {
-            path[y1Index] = ret.axis.chart.yAxis[0].toPixels(start);
-            path[y4Index] = ret.axis.chart.yAxis[0].toPixels(start);
+      const { isNumber } = H;
+      H.Axis.prototype.getPlotBandPath = function (from, to, options) {
+        const { start, end } = options;
+        if (options === void 0) {
+          options = this.options;
+        }
+        var toPath = this.getPlotLinePath({
+            value: to,
+            force: true,
+            acrossPanes: options.acrossPanes,
+          }),
+          result = [],
+          horiz = this.horiz,
+          outside =
+            !isNumber(this.min) ||
+            !isNumber(this.max) ||
+            (from < this.min && to < this.min) ||
+            (from > this.max && to > this.max);
+        var path = this.getPlotLinePath({
+            value: from,
+            force: true,
+            acrossPanes: options.acrossPanes,
+          }),
+          i,
+          // #4964 check if chart is inverted or plotband is on yAxis
+          plus = 1,
+          isFlat;
+        if (path && toPath) {
+          // Flat paths don't need labels (#3836)
+          if (outside) {
+            isFlat = path.toString() === toPath.toString();
+            plus = 0;
           }
-          if (end) {
-            path[y2Index] = ret.axis.chart.yAxis[0].toPixels(end);
-            path[x3Index] = ret.axis.chart.yAxis[0].toPixels(end);
+          // Go over each subpath - for panes in Highcharts Stock
+          for (i = 0; i < path.length; i += 2) {
+            var pathStart = path[i],
+              pathEnd = path[i + 1],
+              toPathStart = toPath[i],
+              toPathEnd = toPath[i + 1];
+            // Type checking all affected path segments. Consider
+            // something smarter.
+            if (
+              (pathStart[0] === "M" || pathStart[0] === "L") &&
+              (pathEnd[0] === "M" || pathEnd[0] === "L") &&
+              (toPathStart[0] === "M" || toPathStart[0] === "L") &&
+              (toPathEnd[0] === "M" || toPathEnd[0] === "L")
+            ) {
+              // Add 1 pixel when coordinates are the same
+              if (horiz && toPathStart[1] === pathStart[1]) {
+                toPathStart[1] += plus;
+                toPathEnd[1] += plus;
+              } else if (!horiz && toPathStart[2] === pathStart[2]) {
+                toPathStart[2] += plus;
+                toPathEnd[2] += plus;
+              }
+              if (start !== void 0 && end !== void 0) {
+                const startPx = this.chart.xAxis[0].toPixels(start),
+                  endPx = this.chart.xAxis[0].toPixels(end);
+                result.push(
+                  ["M", startPx, pathStart[2]],
+                  ["L", endPx, pathEnd[2]],
+                  ["L", endPx, toPathEnd[2]],
+                  ["L", startPx, toPathStart[2]],
+                  ["Z"]
+                );
+              } else {
+                result.push(
+                  ["M", pathStart[1], pathStart[2]],
+                  ["L", pathEnd[1], pathEnd[2]],
+                  ["L", toPathEnd[1], toPathEnd[2]],
+                  ["L", toPathStart[1], toPathStart[2]],
+                  ["Z"]
+                );
+              }
+            }
+            result.isFlat = isFlat;
           }
         } else {
-          if (start) {
-            path[x1Index] = ret.axis.chart.xAxis[0].toPixels(start);
-            path[x4Index] = ret.axis.chart.xAxis[0].toPixels(start);
-          }
-          if (end) {
-            path[x2Index] = ret.axis.chart.xAxis[0].toPixels(end);
-            path[x3Index] = ret.axis.chart.xAxis[0].toPixels(end);
-          }
+          // outside the axis area
+          path = null;
         }
-
-        ret.svgElem.attr({ d: path.join(" ") });
-
-        return ret;
-      });
+        return result;
+      };
     })(Highcharts);
-  }, []);
+  });
 
   const click = (event) => {
-    console.log(...event.yAxis);
-    console.log(...event.xAxis);
+    // console.log(...event.yAxis);
+    // console.log(...event.xAxis);
   };
-  const selected = (event) => {
-    console.log(new Date(event.xAxis[0].min));
-    console.log(new Date(event.xAxis[0].max));
-    console.log(event);
-    console.log(event.xAxis[0].min);
-    console.log(event.xAxis[0].max);
-    event.preventDefault();
-    handleAddTemp(event.xAxis[0].min, event.xAxis[0].max);
-  };
+  // const selected = (event) => {
+  //   console.log(new Date(event.xAxis[0].min));
+  //   console.log(new Date(event.xAxis[0].max));
+  //   console.log(event);
+  //   console.log(event.xAxis[0].min);
+  //   console.log(event.xAxis[0].max);
+  //   event.preventDefault();
+  //   handleAddTemp(event.xAxis[0].min, event.xAxis[0].max);
+  // };
 
   const [range, setRange] = useState([]);
 
@@ -116,7 +164,7 @@ export const LineSD = () => {
       },
       chart: {
         zoomType: "x",
-        events: { click: click },
+        // events: { click: click },
         height: 700,
         width: 1500,
       },
@@ -138,6 +186,19 @@ export const LineSD = () => {
           },
         },
       },
+      rangeSelector: {
+        buttons: [
+          {
+            type: "all",
+            text: "All",
+            events: {
+              click: function () {
+                console.log("Set filter to all");
+              },
+            },
+          },
+        ],
+      },
       series: [
         {
           name: "data1",
@@ -147,12 +208,23 @@ export const LineSD = () => {
       legend: {
         align: "right",
       },
+      // xAxis: {
+      //   plotBands: [
+      //     {
+      //       from: new Date("2020-01-01"),
+      //       to: new Date("2030-01-01"),
+      //       color: "#6FCC9F",
+      //       // start: new Date("2020-01-01"),
+      //       // end: new Date("2030-01-01"),
+      //     },
+      //   ],
+      // },
 
       yAxis: {
         crosshair: true,
         plotBands: [
           {
-            from: 1,
+            from: 0,
             to: 300,
             color: "#6FCC9F",
             start: 1,
@@ -196,7 +268,7 @@ export const LineSD = () => {
       },
     };
     return options;
-  });
+  }, [click]);
 
   return (
     <HighchartsReact

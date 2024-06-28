@@ -6,10 +6,18 @@ import { LocalPizza } from "@mui/icons-material";
 
 export const LineScale = () => {
   const handleSetX = () => {
-    setAddX({ min: parseInt(minX), max: parseInt(maxX) });
+    setAddX({
+      min: parseInt(minX),
+      max: parseInt(maxX),
+      tickPositions: findTickPosition(minX, maxX),
+    });
   };
   const handleSetY = () => {
-    setAddY({ min: parseInt(minY), max: parseInt(maxY) });
+    setAddY({
+      min: parseInt(minY),
+      max: parseInt(maxY),
+      tickPositions: findTickPosition(minY, maxY),
+    });
   };
   const [minX, setMinX] = useState(null);
   const [minY, setMinY] = useState(null);
@@ -17,7 +25,24 @@ export const LineScale = () => {
   const [maxY, setMaxY] = useState(null);
   const [addX, setAddX] = useState({ min: null, max: null });
   const [addY, setAddY] = useState({ min: null, max: null });
-  console.log(addY);
+  // console.log(addY);
+
+  const findTickPosition = (min, max) => {
+    const minAxis = parseInt(min);
+    const maxAxis = parseInt(max);
+    let setTick = (maxAxis - minAxis) / 5;
+
+    let tickPositions = [
+      minAxis,
+      minAxis + setTick,
+      minAxis + setTick * 2,
+      minAxis + setTick * 3,
+      minAxis + setTick * 4,
+      maxAxis,
+    ];
+    console.log(min);
+    return tickPositions;
+  };
 
   const getData = () => {
     const genData = useMemo(() => {

@@ -33,15 +33,19 @@ export const MarkyAxis = () => {
   };
 
   const handleLine = (y) => {
-    range.map((item) => {
-      if (item.range === y) {
-        console.log("delete");
-        handleDeleteLine(y);
-      } else {
-        console.log("add");
-        handleAddLine(y);
-      }
-    });
+    if (range.length === 0) {
+      handleAddLine(y);
+    } else {
+      range.map((item) => {
+        if (item.range === y) {
+          console.log("delete");
+          handleDeleteLine(y);
+        } else {
+          console.log("add");
+          handleAddLine(y);
+        }
+      });
+    }
   };
 
   const handleDeleteLine = (y) => {

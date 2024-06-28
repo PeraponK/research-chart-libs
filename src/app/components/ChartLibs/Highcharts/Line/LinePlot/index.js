@@ -179,36 +179,15 @@ export const LinePlot = () => {
           },
         },
       },
-      // series: [
-      //   {
-      //     data: [
-      //       29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-      //       //   { y: 216.4, marker: { fillColor: "#BF0B23", radius: 2 } },
-      //       194.1, 95.6, 54.4,
-      //     ],
-      //     zoneAxis: "x",
-      //     zones: sortZone,
-      //   },
-      // ],
+
       series: [
         {
           data: handleDataMarker,
-
-          // data: [
-          //   { y: 5, marker: { symbol: "circle" } },
-          //   { y: 10, marker: { symbol: "square" } },
-          //   { y: 15, marker: { symbol: "diamond" } },
-          //   { y: 20, marker: { symbol: "triangle" } },
-          // ],
           point: {
             events: {
               click: function () {
-                // handleAlert(this.symbol);
                 alert(this.alert);
               },
-              // click: function () {
-              //   alert("Marker clicked!");
-              // },
             },
           },
         },
@@ -235,13 +214,6 @@ export const LinePlot = () => {
       },
       yAxis: {
         crosshair: true,
-        //   plotBands: [
-        //     {
-        //       color: "orange", // Color value
-        //       from: 50, // Start of the plot band
-        //       to: 30, // End of the plot band
-        //     },
-        //   ],
       },
     };
     return options;

@@ -3,8 +3,10 @@ import Highcharts from "highcharts/highstock";
 import React, { useEffect, useMemo, useState } from "react";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
+import HighchartsExporting from "highcharts/modules/exporting";
 
 export const MarkxAxis = () => {
+  HighchartsExporting(Highcharts);
   HighchartsBoost(Highcharts);
   HighchartsZoom(Highcharts);
   const getData = () => {
