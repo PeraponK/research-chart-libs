@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import { readCSV } from "./data";
+import { Height } from "@mui/icons-material";
 
 export const Scatter = () => {
   const [data, setData] = useState([]);
@@ -25,16 +26,49 @@ export const Scatter = () => {
 
     return { cx, cy, rx, ry, angleRad };
   }
+  // const cluster1 = {
+  //   clusterId: 1,
+  //   lowest: 4800,
+  //   xClusterCenter: 300,
+  //   yClusterCenter: 250,
+  //   xSd: 40.008,
+  //   ySd: 10.613,
+  //   angleDeg: 90,
+  //   sdMultiple: 2,
+  //   th: 4,
+  // };
   const cluster1 = {
     clusterId: 1,
     lowest: 4800,
-    xClusterCenter: 300,
-    yClusterCenter: 250,
-    xSd: 40.008,
-    ySd: 10.613,
-    angleDeg: 90,
-    sdMultiple: 2,
-    th: 4,
+    xClusterCenter: 859.246,
+    yClusterCenter: 101.792,
+    xSd: 12.519,
+    ySd: 9.189,
+    angleDeg: -145.778,
+    sdMultiple: 3,
+    th: 10,
+  };
+
+  const drawEllipse = (chart, cx, cy, rx, ry) => {
+    const x1 = chart.xAxis[0].toPixels(cx - rx);
+    const x2 = chart.xAxis[0].toPixels(cx + rx);
+    const y1 = chart.yAxis[0].toPixels(cy - ry);
+    const y2 = chart.yAxis[0].toPixels(cy + ry);
+
+    const rectClass = "operating-point-ellipse";
+    document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
+
+    chart.renderer
+      .rect(x1, y2, x2 - x1, y1 - y2, "50%")
+      .attr({
+        "stroke-width": 1,
+        stroke: "green",
+        fill: "green",
+        "fill-opacity": 0.2,
+        zIndex: 0,
+      })
+      .addClass(rectClass)
+      .add();
   };
 
   const cResult = calculateClusterParameters(cluster1);
@@ -43,10 +77,13 @@ export const Scatter = () => {
     test();
   }, []);
 
+  const rectClass = "operating-point-ellipse";
+  document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
+
   let dataScatter = [];
   data.map((item) =>
     dataScatter.push([
-      new Date(item.TimeStamp).getTime(),
+      parseFloat(item.BYA_PLC_GE3010C_ExhaustTemp_LB),
       parseFloat(item.BYA_PLC_TT3201_PV),
     ])
   );
@@ -74,25 +111,11 @@ export const Scatter = () => {
           type: "xy",
         },
         events: {
+          redraw: function () {
+            drawEllipse(this, 859.246, 101.792, 12.519, 9.189, -145.778, 3);
+          },
           load: function () {
-            const renderer = this.renderer;
-            const ellipse = renderer
-              .createElement("ellipse")
-              .attr({
-                cx: cResult.cx,
-                cy: cResult.cy,
-                rx: cResult.rx,
-                ry: cResult.ry,
-                // rotation: cResult.angleRad,
-                "stroke-width": 2,
-                stroke: "blue",
-                fill: "none",
-                zIndex: 3,
-              })
-              .add();
-            ellipse.attr({
-              transform: `rotate(${cluster1.angleDeg}, ${cResult.cx}, ${cResult.cy})`,
-            });
+            drawEllipse(this, 859.246, 101.792, 12.519, 9.189, -145.778, 3);
           },
         },
       },
