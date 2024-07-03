@@ -34,9 +34,9 @@ export const Waterfall = () => {
   // }, [data]);
 
   const [data, setData] = useState([
-    { name: "A", value: 0, min: -20, max: 30 },
-    { name: "B", value: -20, min: -35, max: 0 },
-    { name: "C", value: 33, min: 0, max: 35 },
+    { name: "Machine_Tag_001", value: 15, min: -20, max: 30 },
+    { name: "Machine_Tag_002", value: -20, min: -60, max: 0 },
+    { name: "Machine_Tag_003", value: 33, min: 0, max: 35 },
     // 10, -10, 20,
   ]);
   // useEffect(() => {
@@ -119,6 +119,16 @@ export const Waterfall = () => {
         //       }
         //     }
         //   ),
+        //   // dataLabels: {
+        //   //   formatter: function () {
+        //   //     return (
+        //   //       '<span style="font-size:25px">' +
+        //   //       (80 - this.series.chart.series[1].data[0].y)
+        //   //     );
+        //   //     ("</span><br/>");
+        //   //   },
+        //   // },
+
         //   dashStyle: "dash",
         //   borderColor: "blue",
         //   borderWidth: 2,
@@ -127,61 +137,12 @@ export const Waterfall = () => {
         //     pointFormat: `min`,
         //   },
         // },
+
         // {
         //   name: "Value",
         //   data: data.map((item) => item.value),
         // },
         //---------------------------------------------------no dash & null
-        // {
-        //   name: "Max",
-        //   data: data.map((item) =>
-        //     // item.value < 0 ? 0 : item.max - item.value
-        //     {
-        //       if (item.value < 0) {
-        //         return 0;
-        //       } else if (item.value > 0) {
-        //         return item.max - item.value;
-        //       } else if (item.value === 0) {
-        //         return null;
-        //       }
-        //     }
-        //   ),
-        //   dashStyle: "dash",
-        //   borderColor: "blue",
-        //   borderWidth: 2,
-        //   color: "none",
-        //   tooltip: {
-        //     pointFormat: `max`,
-        //   },
-        // },
-        // {
-        //   name: "Min",
-        //   data: data.map((item) =>
-        //     //value -15 min -20 max 35
-        //     // item.value > 0 ? 0 : item.min - item.value
-        //     {
-        //       if (item.value > 0) {
-        //         return 0;
-        //       } else if (item.value < 0) {
-        //         return item.min - item.value;
-        //       } else if (item.value === 0) {
-        //         return null;
-        //       }
-        //     }
-        //   ),
-        //   dashStyle: "dash",
-        //   borderColor: "blue",
-        //   borderWidth: 2,
-        //   color: "none",
-        //   tooltip: {
-        //     pointFormat: `min`,
-        //   },
-        // },
-        // {
-        //   name: "Value",
-        //   data: data.map((item) => item.value),
-        // },
-        //------------------------------------------------------No dash return 0
         {
           name: "Max",
           data: data.map((item) =>
@@ -192,7 +153,7 @@ export const Waterfall = () => {
               } else if (item.value > 0) {
                 return item.max - item.value;
               } else if (item.value === 0) {
-                return 0;
+                return null;
               }
             }
           ),
@@ -215,7 +176,7 @@ export const Waterfall = () => {
               } else if (item.value < 0) {
                 return item.min - item.value;
               } else if (item.value === 0) {
-                return 0;
+                return null;
               }
             }
           ),
@@ -230,7 +191,67 @@ export const Waterfall = () => {
         {
           name: "Value",
           data: data.map((item) => item.value),
+          dataLabels: {
+            formatter: function () {
+              return this.x;
+            },
+            align: "left",
+            rotation: 270,
+            x: -20,
+            shape: null,
+            enabled: true,
+          },
         },
+        //------------------------------------------------------No dash return 0
+        // {
+        //   name: "Max",
+        //   data: data.map((item) =>
+        //     // item.value < 0 ? 0 : item.max - item.value
+        //     {
+        //       if (item.value < 0) {
+        //         return 0;
+        //       } else if (item.value > 0) {
+        //         return item.max - item.value;
+        //       } else if (item.value === 0) {
+        //         return 0;
+        //       }
+        //     }
+        //   ),
+        //   dashStyle: "dash",
+        //   borderColor: "blue",
+        //   borderWidth: 2,
+        //   color: "none",
+        //   tooltip: {
+        //     pointFormat: `max`,
+        //   },
+        // },
+        // {
+        //   name: "Min",
+        //   data: data.map((item) =>
+        //     //value -15 min -20 max 35
+        //     // item.value > 0 ? 0 : item.min - item.value
+        //     {
+        //       if (item.value > 0) {
+        //         return 0;
+        //       } else if (item.value < 0) {
+        //         return item.min - item.value;
+        //       } else if (item.value === 0) {
+        //         return 0;
+        //       }
+        //     }
+        //   ),
+        //   dashStyle: "dash",
+        //   borderColor: "blue",
+        //   borderWidth: 2,
+        //   color: "none",
+        //   tooltip: {
+        //     pointFormat: `min`,
+        //   },
+        // },
+        // {
+        //   name: "Value",
+        //   data: data.map((item) => item.value),
+        // },
         //------------------------------------------------------Default
         // {
         //   name: "Max",
