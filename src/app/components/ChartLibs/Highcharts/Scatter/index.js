@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import { readCSV } from "./data";
-import { Height } from "@mui/icons-material";
 
 export const Scatter = () => {
   const [data, setData] = useState([]);
@@ -12,6 +11,7 @@ export const Scatter = () => {
     let parsedData = await readCSV("public/master_tablein-1.csv");
     setData(parsedData);
   };
+
   function calculateClusterParameters(cluster) {
     const cx = cluster.xClusterCenter;
     const cy = cluster.yClusterCenter;
@@ -23,8 +23,10 @@ export const Scatter = () => {
     const rx = xSd * sdMultiple;
     const ry = ySd * sdMultiple;
     const angleRad = angleDeg * (Math.PI / 180);
+    console.log("Rad", angleRad);
 
-    return { cx, cy, rx, ry, angleRad };
+    return { cx, cy, rx, ry, angleDeg };
+    // return { cx, cy, rx, ry, angleRad };
   }
   // const cluster1 = {
   //   clusterId: 1,
@@ -49,36 +51,75 @@ export const Scatter = () => {
     th: 10,
   };
 
-  const drawEllipse = (chart, cx, cy, rx, ry) => {
+  // const drawEllipse = (chart, cx, cy, rx, ry) => {
+  //   const cResult = calculateClusterParameters(cluster1);
+  //   // console.log(cx, cy, rx, ry);
+  //   const x1 = chart.xAxis[0].toPixels(cResult.cx - cResult.rx);
+  //   const x2 = chart.xAxis[0].toPixels(cResult.cx + cResult.rx);
+  //   const y1 = chart.yAxis[0].toPixels(cResult.cy - cResult.ry);
+  //   const y2 = chart.yAxis[0].toPixels(cResult.cy + cResult.ry);
+
+  //   const rectClass = "operating-point-ellipse";
+  //   document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
+
+  //   chart.renderer
+  //     .rect(x1, y2, x2 - x1, y1 - y2, "50%")
+  //     .attr({
+  //       "stroke-width": 1,
+  //       stroke: "green",
+  //       fill: "green",
+  //       "fill-opacity": 0.2,
+  //       zIndex: 10,
+  //     })
+  //     .addClass(rectClass)
+  //     .add();
+  // };
+
+  const drawEllipse = (chart, cx, cy, rx, ry, angleDeg) => {
+    const cResult = calculateClusterParameters(cluster1);
+    // console.log(cx, cy, rx, ry);
     const x1 = chart.xAxis[0].toPixels(cx - rx);
     const x2 = chart.xAxis[0].toPixels(cx + rx);
     const y1 = chart.yAxis[0].toPixels(cy - ry);
     const y2 = chart.yAxis[0].toPixels(cy + ry);
+    const angleX = chart.xAxis[0].toPixels(cx);
+    const angleY = chart.yAxis[0].toPixels(cy);
+    // console.log(-145.778 * (Math.PI / 180));
+    console.log(chart.xAxis[0].toPixels(861));
+    console.log(chart.yAxis[0].toPixels(101));
 
+    // console.log(chart);
     const rectClass = "operating-point-ellipse";
     document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
 
-    chart.renderer
+    const ellipse = chart.renderer
       .rect(x1, y2, x2 - x1, y1 - y2, "50%")
       .attr({
         "stroke-width": 1,
         stroke: "green",
         fill: "green",
         "fill-opacity": 0.2,
-        zIndex: 0,
+        zIndex: 10,
+        // rotation: 90,
       })
       .addClass(rectClass)
       .add();
+    ellipse.attr({
+      transform: `rotate(, ${angleX}, ${angleY})`,
+    });
+    console.log(`rotate(, 861, 101`);
+    // ellipse.attr({
+    //   transform: 60,
+    // });
+    // console.log(ellipse);
   };
-
-  const cResult = calculateClusterParameters(cluster1);
 
   useEffect(() => {
     test();
   }, []);
 
-  const rectClass = "operating-point-ellipse";
-  document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
+  // const rectClass = "operating-point-ellipse";
+  // document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
 
   let dataScatter = [];
   data.map((item) =>
@@ -106,16 +147,17 @@ export const Scatter = () => {
   let options = useMemo(() => {
     let option = {
       chart: {
+        height: 800,
         type: "scatter",
         zooming: {
           type: "xy",
         },
         events: {
           redraw: function () {
-            drawEllipse(this, 859.246, 101.792, 12.519, 9.189, -145.778, 3);
+            drawEllipse(this, 859.246, 101.792, 12.519, 9.189, -145.778);
           },
           load: function () {
-            drawEllipse(this, 859.246, 101.792, 12.519, 9.189, -145.778, 3);
+            drawEllipse(this, 859.246, 101.792, 12.519, 9.189, -145.778);
           },
         },
       },
