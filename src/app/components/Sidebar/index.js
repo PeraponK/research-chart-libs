@@ -39,6 +39,8 @@ import { MarkyAxis } from "../ChartLibs/Highcharts/Line/LineMark/MarkyAxis";
 import { LineScale } from "../ChartLibs/Highcharts/Line/LineScale";
 import { Scatter } from "../ChartLibs/Highcharts/Scatter";
 import { Waterfall } from "../ChartLibs/Highcharts/Bar/Waterfall";
+import { PairPlot } from "../ChartLibs/Highcharts/Pairplot/Pair";
+import { BezierCurve } from "../ChartLibs/Highcharts/Line/BezierCurve";
 
 const drawerWidth = 200;
 
@@ -241,12 +243,14 @@ export const Sidebar = ({ onChangeTheme, status }, props) => {
             {/* <HighStock /> */}
             {/* <LineScale /> */}
             <Scatter />
+            {/* <BezierCurve/> */}
           </Grid>
           <Grid xs={12} sm={12} md={12} lg={12}>
             {/* <LineSD /> */}
             {/* <MarkyAxis /> */}
             {/* <MarkxAxis /> */}
             {/* <Waterfall /> */}
+            {/* <PairPlot /> */}
           </Grid>
         </Grid>
       </Box>

@@ -70,12 +70,6 @@ export const HighStock = () => {
     setRange([...updatePlot, newRange]);
   };
 
-  const handleDeletePlot = (min, max) => {
-    let updatePlot = range.filter((item) => item.minRange !== min);
-
-    setRange(updatePlot);
-  };
-
   const handleAddPlot = (x1, x2) => {
     console.log("check before add", range);
     let updatePlot = {

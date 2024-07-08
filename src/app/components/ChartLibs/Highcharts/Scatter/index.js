@@ -1,44 +1,28 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import { readCSV } from "./data";
+import { ScatterPlot } from "./Plot";
 
 export const Scatter = () => {
   const [data, setData] = useState([]);
-  const test = async () => {
-    let parsedData = await readCSV("public/master_tablein-1.csv");
-    setData(parsedData);
-  };
 
-  function calculateClusterParameters(cluster) {
-    const cx = cluster.xClusterCenter;
-    const cy = cluster.yClusterCenter;
-    const xSd = cluster.xSd;
-    const ySd = cluster.ySd;
-    const sdMultiple = cluster.sdMultiple;
-    const angleDeg = cluster.angleDeg;
-
-    const rx = xSd * sdMultiple;
-    const ry = ySd * sdMultiple;
-    const angleRad = angleDeg * (Math.PI / 180);
-    console.log("Rad", angleRad);
-
-    return { cx, cy, rx, ry, angleDeg };
-    // return { cx, cy, rx, ry, angleRad };
-  }
-  // const cluster1 = {
-  //   clusterId: 1,
-  //   lowest: 4800,
-  //   xClusterCenter: 300,
-  //   yClusterCenter: 250,
-  //   xSd: 40.008,
-  //   ySd: 10.613,
-  //   angleDeg: 90,
-  //   sdMultiple: 2,
-  //   th: 4,
+  // const test = async () => {
+  //   let parsedData = await readCSV("public/master_tablein-1.csv");
+  //   setData(parsedData);
   // };
+
+  //จะfetchdata ทุกครั้งที่มีการเปลี่ยนแปลงอันนี่ต้องส่งค่าprops ที่จะใส่ลง readCSV ถ้าค่าที่ส่งมาเปลี่ยนก็ให้ทำงานอีกรอบ?
+  useEffect(() => {
+    const fetchData = async () => {
+      let parsedData = await readCSV("public/master_tablein-1.csv");
+      setData(parsedData);
+    };
+    fetchData();
+  }, []);
+
   const cluster1 = {
     clusterId: 1,
     lowest: 4800,
@@ -50,213 +34,82 @@ export const Scatter = () => {
     sdMultiple: 3,
     th: 10,
   };
+  // drawEllipse(this, 859.246, 101.792, 12.519, 9.189, -145.778);
 
-  // const drawEllipse = (chart, cx, cy, rx, ry) => {
-  //   const cResult = calculateClusterParameters(cluster1);
-  //   // console.log(cx, cy, rx, ry);
-  //   const x1 = chart.xAxis[0].toPixels(cResult.cx - cResult.rx);
-  //   const x2 = chart.xAxis[0].toPixels(cResult.cx + cResult.rx);
-  //   const y1 = chart.yAxis[0].toPixels(cResult.cy - cResult.ry);
-  //   const y2 = chart.yAxis[0].toPixels(cResult.cy + cResult.ry);
-
-  //   const rectClass = "operating-point-ellipse";
-  //   document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
-
-  //   chart.renderer
-  //     .rect(x1, y2, x2 - x1, y1 - y2, "50%")
-  //     .attr({
-  //       "stroke-width": 1,
-  //       stroke: "green",
-  //       fill: "green",
-  //       "fill-opacity": 0.2,
-  //       zIndex: 10,
-  //     })
-  //     .addClass(rectClass)
-  //     .add();
-  // };
-
-  const drawEllipse = (chart, cx, cy, rx, ry, angleDeg) => {
-    const cResult = calculateClusterParameters(cluster1);
-    // console.log(cx, cy, rx, ry);
-    const x1 = chart.xAxis[0].toPixels(cx - rx);
-    const x2 = chart.xAxis[0].toPixels(cx + rx);
-    const y1 = chart.yAxis[0].toPixels(cy - ry);
-    const y2 = chart.yAxis[0].toPixels(cy + ry);
-    const angleX = chart.xAxis[0].toPixels(cx);
-    const angleY = chart.yAxis[0].toPixels(cy);
-    // console.log(-145.778 * (Math.PI / 180));
-    console.log(chart.xAxis[0].toPixels(861));
-    console.log(chart.yAxis[0].toPixels(101));
-
-    // console.log(chart);
-    const rectClass = "operating-point-ellipse";
-    document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
-
-    const ellipse = chart.renderer
-      .rect(x1, y2, x2 - x1, y1 - y2, "50%")
-      .attr({
-        "stroke-width": 1,
-        stroke: "green",
-        fill: "green",
-        "fill-opacity": 0.2,
-        zIndex: 10,
-        // rotation: 90,
-      })
-      .addClass(rectClass)
-      .add();
-    ellipse.attr({
-      transform: `rotate(, ${angleX}, ${angleY})`,
-    });
-    console.log(`rotate(, 861, 101`);
-    // ellipse.attr({
-    //   transform: 60,
-    // });
-    // console.log(ellipse);
-  };
+  //ต้องทำpropที่ส่งค่ามาใช้แทนcluster1 ใช้ useEffect เพราะจะได้setค่าclusterdata ไปใช้ทุกครั้งที่ค่าcluster1เปลี่ยน?
 
   useEffect(() => {
-    test();
+    drawEllipse(Highcharts);
   }, []);
 
-  // const rectClass = "operating-point-ellipse";
-  // document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
+  // const calculateClusterParameters = useMemo((cluster) => {
+  //   const angleRad = Math.abs(cluster.angleDeg * (Math.PI / 180));
+  //   console.log("Rad", angleRad);
 
-  let dataScatter = [];
-  data.map((item) =>
-    dataScatter.push([
-      parseFloat(item.BYA_PLC_GE3010C_ExhaustTemp_LB),
-      parseFloat(item.BYA_PLC_TT3201_PV),
-    ])
+  //   return { angleRad };
+  // },[cluster]);
+
+  function calculateClusterParameters(cluster) {
+    const cx = cluster.xClusterCenter;
+    const cy = cluster.yClusterCenter;
+    const rx = cluster.xSd;
+    const ry = cluster.ySd;
+    const angleRad = Math.abs(cluster.angleDeg * (Math.PI / 180));
+
+    return { cx, cy, rx, ry, angleRad };
+  }
+
+  const drawEllipse = useCallback(
+    (chart) => {
+      if (chart.xAxis !== undefined && chart.yAxis !== undefined) {
+        const cResult = calculateClusterParameters(cluster1);
+        const x1 = chart.xAxis[0].toPixels(cResult.cx - cResult.rx);
+        const x2 = chart.xAxis[0].toPixels(cResult.cx + cResult.rx);
+        const y1 = chart.yAxis[0].toPixels(cResult.cy - cResult.ry);
+        const y2 = chart.yAxis[0].toPixels(cResult.cy + cResult.ry);
+        const angleX = chart.xAxis[0].toPixels(cResult.cx);
+        const angleY = chart.yAxis[0].toPixels(cResult.cy);
+        const rectClass = "operating-point-ellipse";
+        document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
+        const ellipse = chart.renderer
+          .rect(x1, y2, x2 - x1, y1 - y2, "50%")
+          .attr({
+            "stroke-width": 1,
+            stroke: "green",
+            fill: "green",
+            "fill-opacity": 0.2,
+            zIndex: 10,
+          })
+          .addClass(rectClass)
+          .add();
+        console.log(angleX, angleY);
+        ellipse.attr({
+          transform: `rotate(${cResult.angleRad}, ${angleX}, ${angleY})`,
+        });
+      }
+    },
+    [cluster1]
   );
-  console.log(dataScatter);
 
-  const getData = () => {
-    let data = [];
-    for (let i = 0; i < 10; i++) {
-      let x = Math.random() * 100;
-      let y = Math.random() * 100;
-      data.push([x, y]);
-    }
-    return data;
-  };
-
-  let data1 = getData();
-  let data2 = getData();
-  let data3 = getData();
-  let data4 = getData();
-  let options = useMemo(() => {
-    let option = {
-      chart: {
-        height: 800,
-        type: "scatter",
-        zooming: {
-          type: "xy",
-        },
-        events: {
-          redraw: function () {
-            drawEllipse(this, 859.246, 101.792, 12.519, 9.189, -145.778);
-          },
-          load: function () {
-            drawEllipse(this, 859.246, 101.792, 12.519, 9.189, -145.778);
-          },
-        },
-      },
-
-      title: {
-        text: "Select points by click-drag",
-      },
-
-      // xAxis: {
-      //   type: "datetime",
-      // },
-      subtitle: {
-        text: "Points can also be selected and unselected individually",
-      },
-
-      series: [
-        {
-          custom: {
-            lassoSelection: true,
-          },
-          name: "data1",
-          data: dataScatter,
-          showInLegend: false,
-          allowPointSelect: true,
-          marker: {
-            states: {
-              select: {
-                fillColor: "blue",
-                lineWidth: 1,
-              },
-            },
-          },
-        },
-
-        // {
-        //   custom: {
-        //     lassoSelection: true,
-        //   },
-        //   name: "data2",
-        //   data: data2,
-        //   showInLegend: false,
-        //   allowPointSelect: true,
-        //   marker: {
-        //     states: {
-        //       select: {
-        //         fillColor: "purple",
-        //         lineWidth: 1,
-        //       },
-        //     },
-        //   },
-        // },
-        // {
-        //   custom: {
-        //     lassoSelection: true,
-        //   },
-        //   name: "data3",
-        //   data: data3,
-        //   showInLegend: false,
-        //   allowPointSelect: true,
-        //   marker: {
-        //     states: {
-        //       select: {
-        //         fillColor: "green",
-        //         lineWidth: 1,
-        //       },
-        //     },
-        //   },
-        // },
-        // {
-        //   custom: {
-        //     lassoSelection: true,
-        //   },
-        //   name: "data4",
-        //   data: data4,
-        //   showInLegend: false,
-        //   allowPointSelect: true,
-        //   marker: {
-        //     states: {
-        //       select: {
-        //         fillColor: "red",
-        //         lineWidth: 1,
-        //       },
-        //     },
-        //   },
-        // },
-      ],
-    };
-    return option;
-  });
+  const dataScatter = useMemo(() => {
+    let getData = [];
+    data.map((item) =>
+      getData.push([
+        parseFloat(item.BYA_PLC_GE3010C_ExhaustTemp_LB),
+        parseFloat(item.BYA_PLC_TT3201_PV),
+      ])
+    );
+    return getData;
+  }, [data]);
 
   return (
-    <HighchartsReact
-      highcharts={Highcharts}
-      options={options}
-      // constructorType={"stockChart"}
-    />
+    <div>
+      <ScatterPlot dataset={dataScatter} drawEllipse={drawEllipse} />
+    </div>
   );
 };
 
+//
 // useEffect(() => {
 //   const polygon = [];
 
