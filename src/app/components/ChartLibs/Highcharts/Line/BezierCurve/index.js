@@ -124,7 +124,7 @@ export const BezierCurve = () => {
 
       series: [
         {
-          data: subdividePoints([2, 10, 2], 2),
+          data: subdividePoints([5, 10, 0, 5], 10),
         },
       ],
     };

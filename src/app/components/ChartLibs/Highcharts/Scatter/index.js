@@ -3,37 +3,63 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
-import { readCSV } from "./data";
+import { parsedArrayData, readCSV } from "./data";
 import { ScatterPlot } from "./Plot";
+import zIndex from "@mui/material/styles/zIndex";
 
 export const Scatter = () => {
   const [data, setData] = useState([]);
+  const [clusterData, setClusterData] = useState([]);
+  const [check, setCheck] = useState([]);
 
   // const test = async () => {
   //   let parsedData = await readCSV("public/master_tablein-1.csv");
   //   setData(parsedData);
   // };
 
-  //จะfetchdata ทุกครั้งที่มีการเปลี่ยนแปลงอันนี่ต้องส่งค่าprops ที่จะใส่ลง readCSV ถ้าค่าที่ส่งมาเปลี่ยนก็ให้ทำงานอีกรอบ?
+  const csvFilePath = "public/master_tablein-1.csv";
+  const data_2023 = "public/data_2023.csv";
+  const data_2024 = "public/data_2024.csv";
+
   useEffect(() => {
     const fetchData = async () => {
-      let parsedData = await readCSV("public/master_tablein-1.csv");
+      let parsedData = await parsedArrayData([data_2023, data_2024]);
       setData(parsedData);
     };
     fetchData();
   }, []);
+  //degree pass
+  const cluster_22 = "public/cluster_22.csv";
+  //degree pass
+  const cluster_31 = "public/cluster_31.csv";
+  //degree pass
+  const cluster_38 = "public/cluster_38.csv";
+  const cluster_40 = "public/cluster_40.csv";
+  const cluster_53 = "public/cluster_53.csv";
+  const cluster_55 = "public/cluster_55.csv";
 
-  const cluster1 = {
-    clusterId: 1,
-    lowest: 4800,
-    xClusterCenter: 859.246,
-    yClusterCenter: 101.792,
-    xSd: 12.519,
-    ySd: 9.189,
-    angleDeg: -145.778,
-    sdMultiple: 3,
-    th: 10,
-  };
+  const cluster_data = cluster_22;
+
+  useEffect(() => {
+    const fetchCluster = async () => {
+      let parsedData = await readCSV(cluster_data);
+      setClusterData(parsedData);
+      setCheck(cluster_data);
+    };
+    fetchCluster();
+  }, []);
+
+  // const cluster1 = {
+  //   clusterId: 1,
+  //   lowest: 4800,
+  //   xClusterCenter: 859.246,
+  //   yClusterCenter: 101.792,
+  //   xSd: 12.519,
+  //   ySd: 9.189,
+  //   angleDeg: -145.778,
+  //   sdMultiple: 3,
+  //   th: 10,
+  // };
   // drawEllipse(this, 859.246, 101.792, 12.519, 9.189, -145.778);
 
   //ต้องทำpropที่ส่งค่ามาใช้แทนcluster1 ใช้ useEffect เพราะจะได้setค่าclusterdata ไปใช้ทุกครั้งที่ค่าcluster1เปลี่ยน?
@@ -48,27 +74,86 @@ export const Scatter = () => {
 
   //   return { angleRad };
   // },[cluster]);
+  // console.log(data);
 
-  function calculateClusterParameters(cluster) {
-    const cx = cluster.xClusterCenter;
-    const cy = cluster.yClusterCenter;
-    const rx = cluster.xSd;
-    const ry = cluster.ySd;
-    const angleRad = Math.abs(cluster.angleDeg * (Math.PI / 180));
+  //ขนาดองศาใกล้เคียง แปลว่าไม่ได้
+  function calculateClusterParameters(clusterData) {
+    // console.log("length", clusterData.length);
+    if (clusterData.length > 0) {
+      // console.log("in calculate", clusterData);
+      // console.log("ClusterData", clusterData);
+      console.log("cluster Data", clusterData);
+      const cx = clusterData[0].X_CLUSTER_CENTER;
+      const cy = clusterData[0].Y_CLUSTER_CENTER;
+      const rx = clusterData[0].X_SD * clusterData[0].SD_MULTIPLIER;
+      const ry = clusterData[0].Y_SD * clusterData[0].SD_MULTIPLIER;
+      // const angleRad = clusterData[0].ANGLE_DEG * (Math.PI / 180);
 
-    return { cx, cy, rx, ry, angleRad };
+      const angleRad = clusterData[0].ANGLE_DEG * (180 / Math.PI);
+      const sd = clusterData[0].SD_MULTIPLIER;
+
+      // console.log("check this !!", cx, cy, rx, ry);
+      return { cx, cy, rx, ry, angleRad, sd };
+    } else {
+      return false;
+    }
   }
-
+  //เจอปัญหาjavascript เวลา - จะปกติ แต่พอเป็น+ ดันเป็นstringซะ
   const drawEllipse = useCallback(
     (chart) => {
+      //------------------------------------------------------------------------------ลองเอา่ค่าตรง .rect มาบวกลบแล้วค่อยทำเป็นpixelดูไหม?
       if (chart.xAxis !== undefined && chart.yAxis !== undefined) {
-        const cResult = calculateClusterParameters(cluster1);
+        const cResult = calculateClusterParameters(clusterData);
+
+        // Add a custom circle to the chart using the renderer
+
+        // Create the ellipse element
+        // const x1 = chart.xAxis[0].toPixels(cResult.cx - cResult.rx);
+        // const x2 = chart.xAxis[0].toPixels(
+        //   Number(cResult.cx) + Number(cResult.rx)
+        // );
+
+        // const y1 = chart.yAxis[0].toPixels(cResult.cy - cResult.ry);
+        // const y2 = chart.yAxis[0].toPixels(
+        //   Number(cResult.cy) + Number(cResult.ry)
+        // );
+        // const angleX = chart.xAxis[0].toPixels(cResult.cx);
+        // const angleY = chart.yAxis[0].toPixels(cResult.cy);
+        // const rectClass = "operating-point-ellipse";
+        // document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
+        // chart.renderer
+        //   .createElement("ellipse")
+        //   .attr({
+        //     cx: x1,
+        //     cy: y2,
+        //     rx: x2 - x1,
+        //     ry: y1 - y2,
+        //     "stroke-width": 1,
+        //     stroke: "green",
+        //     fill: "green",
+        //     "fill-opacity": 0.2,
+        //     zIndex: 10,
+        //   })
+        //   .addClass(rectClass)
+        //   .add()
+
+        //   // Rotate the ellipse around its center
+        //   .attr({
+        //     transform: `rotate(${cResult.angleRad}, ${angleX}, ${angleY})`,
+        //   });
+
         const x1 = chart.xAxis[0].toPixels(cResult.cx - cResult.rx);
-        const x2 = chart.xAxis[0].toPixels(cResult.cx + cResult.rx);
+        const x2 = chart.xAxis[0].toPixels(
+          Number(cResult.cx) + Number(cResult.rx)
+        );
+
         const y1 = chart.yAxis[0].toPixels(cResult.cy - cResult.ry);
-        const y2 = chart.yAxis[0].toPixels(cResult.cy + cResult.ry);
+        const y2 = chart.yAxis[0].toPixels(
+          Number(cResult.cy) + Number(cResult.ry)
+        );
         const angleX = chart.xAxis[0].toPixels(cResult.cx);
         const angleY = chart.yAxis[0].toPixels(cResult.cy);
+        // console.log(x1, x2, y1, y2, angleX, angleY);
         const rectClass = "operating-point-ellipse";
         document.querySelectorAll(`.${rectClass}`).forEach((el) => el.remove());
         const ellipse = chart.renderer
@@ -78,27 +163,65 @@ export const Scatter = () => {
             stroke: "green",
             fill: "green",
             "fill-opacity": 0.2,
-            zIndex: 10,
+            zIndex: 3,
           })
           .addClass(rectClass)
           .add();
-        console.log(angleX, angleY);
+        // console.log(angleX, angleY);
         ellipse.attr({
           transform: `rotate(${cResult.angleRad}, ${angleX}, ${angleY})`,
+          // transform: "rotate(0)",
         });
       }
     },
-    [cluster1]
+    [clusterData]
   );
 
   const dataScatter = useMemo(() => {
     let getData = [];
-    data.map((item) =>
-      getData.push([
-        parseFloat(item.BYA_PLC_GE3010C_ExhaustTemp_LB),
-        parseFloat(item.BYA_PLC_TT3201_PV),
-      ])
-    );
+    if (check === "public/cluster_22.csv") {
+      data.map((item) =>
+        getData.push([
+          parseFloat(item.NYA_DCS_G6710A_Cylinder_1),
+          parseFloat(item.NYA_DCS_G6710A_Intake_Manifold),
+        ])
+      );
+    } else if (check === "public/cluster_31.csv") {
+      data.map((item) =>
+        getData.push([
+          parseFloat(item.NYA_DCS_G6710A_Cylinder_10),
+          parseFloat(item.NYA_DCS_G6710A_Intake_Manifold),
+        ])
+      );
+    } else if (check === "public/cluster_38.csv") {
+      data.map((item) =>
+        getData.push([
+          parseFloat(item.NYA_DCS_G6710A_CoolantTemp_LB),
+          parseFloat(item.NYA_DCS_G6710A_OilTemp),
+        ])
+      );
+    } else if (check === "public/cluster_40.csv") {
+      data.map((item) =>
+        getData.push([
+          parseFloat(item.NYA_DCS_G6710A_Intake_Manifold),
+          parseFloat(item.NYA_DCS_G6710A_CoolantTemp_LB),
+        ])
+      );
+    } else if (check === "public/cluster_53.csv") {
+      data.map((item) =>
+        getData.push([
+          parseFloat(item.NYA_DCS_G6710A_Rear_Bear_Temp),
+          parseFloat(item.NYA_DCS_VI6712A_VELOCITY),
+        ])
+      );
+    } else if (check === "public/cluster_55.csv") {
+      data.map((item) =>
+        getData.push([
+          parseFloat(item.NYA_DCS_VI6710A_VELOCITY),
+          parseFloat(item.AVG_ALL_CYLINDER),
+        ])
+      );
+    }
     return getData;
   }, [data]);
 

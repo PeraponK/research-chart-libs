@@ -18,7 +18,9 @@ export default function Home() {
   let [theme, setTheme] = useState(lightTheme);
   return (
     <ThemeProvider theme={theme}>
-      <Sidebar onChangeTheme={onChangeTheme} status={theme} />
+      <Sidebar onChangeTheme={onChangeTheme} status={theme}>
+        {/* <Component {...pageProps} /> */}
+      </Sidebar>
     </ThemeProvider>
   );
 }

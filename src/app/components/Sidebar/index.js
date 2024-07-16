@@ -39,8 +39,11 @@ import { MarkyAxis } from "../ChartLibs/Highcharts/Line/LineMark/MarkyAxis";
 import { LineScale } from "../ChartLibs/Highcharts/Line/LineScale";
 import { Scatter } from "../ChartLibs/Highcharts/Scatter";
 import { Waterfall } from "../ChartLibs/Highcharts/Bar/Waterfall";
-import { PairPlot } from "../ChartLibs/Highcharts/Pairplot/Pair";
 import { BezierCurve } from "../ChartLibs/Highcharts/Line/BezierCurve";
+import { NivoLinePlot } from "../ChartLibs/nivo/Line/LinePlot";
+import { D3Scatter } from "../ChartLibs/D3/Scatter";
+import { DrawBezier } from "../ChartLibs/Highcharts/Line/DrawBezier";
+import { DrawBezier2 } from "../ChartLibs/Highcharts/Line/DrawBezier2";
 
 const drawerWidth = 200;
 
@@ -242,16 +245,18 @@ export const Sidebar = ({ onChangeTheme, status }, props) => {
             {/* <LinePlot /> */}
             {/* <HighStock /> */}
             {/* <LineScale /> */}
-            <Scatter />
-            {/* <BezierCurve/> */}
-          </Grid>
-          <Grid xs={12} sm={12} md={12} lg={12}>
+            {/* <Scatter /> */}
+            {/* <BezierCurve /> */}
             {/* <LineSD /> */}
             {/* <MarkyAxis /> */}
             {/* <MarkxAxis /> */}
             {/* <Waterfall /> */}
-            {/* <PairPlot /> */}
+            {/* <DrawBezier /> */}
+            <DrawBezier2 />
           </Grid>
+          <Grid xs={12} sm={12} md={12} lg={12}></Grid>
+          {/* <NivoLinePlot /> */}
+          {/* <D3Scatter /> */}
         </Grid>
       </Box>
     </Box>
