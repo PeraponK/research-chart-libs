@@ -5,7 +5,7 @@ import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
 import HighchartsExporting from "highcharts/modules/exporting";
 
-export const HighStock = () => {
+const HighStock = () => {
   HighchartsExporting(Highcharts);
   HighchartsBoost(Highcharts);
   HighchartsZoom(Highcharts);
@@ -14,7 +14,7 @@ export const HighStock = () => {
     let oneDay = 24 * 3600 * 1000;
     const genData = useMemo(() => {
       let data = [[base, Math.random() * 300]];
-      for (let i = 1; i < 50000; i++) {
+      for (let i = 1; i < 5000; i++) {
         let now = new Date((base += oneDay));
         data.push([
           +now,
@@ -131,14 +131,17 @@ export const HighStock = () => {
     let options = {
       boost: {
         useGPUTranslations: true,
-        seriesThreshold: 5,
+        seriesThreshold: 0,
       },
       chart: {
         zoomType: "x",
         events: { selection: selected },
-        height: 700,
-        width: 1500,
+        height: "400",
+        // width: "800",
       },
+      // scrollbar: {
+      //   liveRedraw: false,
+      // },
       title: {
         text: "My chart",
       },
@@ -147,6 +150,7 @@ export const HighStock = () => {
       },
       plotOptions: {
         series: {
+          showInNavigator: true,
           marker: {
             enabled: false,
             states: {
@@ -157,6 +161,8 @@ export const HighStock = () => {
           },
         },
       },
+
+      credits: { enabled: false },
 
       series: [
         {
@@ -243,6 +249,7 @@ export const HighStock = () => {
   );
 };
 
+export default HighStock;
 // const handlePlot = (x1, x2) => {
 //   if (range.length === 0) {
 //     handleAddPlot(x1, x2);

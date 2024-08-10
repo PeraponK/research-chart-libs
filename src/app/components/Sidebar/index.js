@@ -24,7 +24,7 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
-import { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { Grid, Paper, Slide } from "@mui/material";
 import { ThemeButton } from "../ThemeButton";
 import { Dashboard, Height } from "@mui/icons-material";
@@ -44,6 +44,7 @@ import { NivoLinePlot } from "../ChartLibs/nivo/Line/LinePlot";
 import { D3Scatter } from "../ChartLibs/D3/Scatter";
 import { DrawBezier } from "../ChartLibs/Highcharts/Line/DrawBezier";
 import { DrawBezier2 } from "../ChartLibs/Highcharts/Line/DrawBezier2";
+import MainPage from "@/app/pages/MainPage";
 
 const drawerWidth = 200;
 
@@ -128,6 +129,8 @@ function HideOnScroll(props) {
     </Slide>
   );
 }
+
+const LazyComponent = React.lazy(() => import("@/app/pages/MainPage/"));
 
 export const Sidebar = ({ onChangeTheme, status }, props) => {
   const theme = useTheme();
@@ -232,7 +235,7 @@ export const Sidebar = ({ onChangeTheme, status }, props) => {
         <DrawerHeader />
         <Grid
           container
-          align="center"
+          align="left"
           direction={"row"}
           xs={12}
           sm={12}
@@ -242,6 +245,10 @@ export const Sidebar = ({ onChangeTheme, status }, props) => {
         >
           {/*COMPONENT HERE*/}
           <Grid xs={12} sm={12} md={12} lg={12}>
+            <MainPage />
+            {/* <Suspense fallback={<div>Loading...</div>}>
+              <LazyComponent />
+            </Suspense> */}
             {/* <LinePlot /> */}
             {/* <HighStock /> */}
             {/* <LineScale /> */}
@@ -252,7 +259,7 @@ export const Sidebar = ({ onChangeTheme, status }, props) => {
             {/* <MarkxAxis /> */}
             {/* <Waterfall /> */}
             {/* <DrawBezier /> */}
-            <DrawBezier2 />
+            {/* <DrawBezier2 /> */}
           </Grid>
           <Grid xs={12} sm={12} md={12} lg={12}></Grid>
           {/* <NivoLinePlot /> */}

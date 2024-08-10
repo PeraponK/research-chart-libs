@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import {
@@ -14,7 +14,7 @@ import {
   line9Bezier2,
 } from "./data";
 
-export const DrawBezier2 = () => {
+const DrawBezier2 = () => {
   const chartRef = useRef();
   let isDrawing = false;
   let path = [];
@@ -88,132 +88,96 @@ export const DrawBezier2 = () => {
     console.log(e.target.files);
     setImage(e.target.files[0]);
   };
+  const options = useMemo(() => {
+    const options = {
+      chart: {
+        events: {
+          load: function () {
+            const chart = this;
 
-  const options = {
-    chart: {
-      events: {
-        load: function () {
-          const chart = this;
+            chart.polygons = [];
 
-          chart.polygons = [];
+            document
+              .getElementById("clear-btn")
+              .addEventListener("click", () => {
+                // chart.polygons.forEach((polygon) => {
+                //   console.log("hello");
+                // });
+                // console.log(chart.polygons[0].points);
+                if (chart.polygons !== undefined) {
+                  //   console.log(chart.polygons[0].points);
+                  console.log(JSON.stringify(chart.polygons[0].points));
+                }
+                // chart.polygons.length = 0;
+                // currentPolygon = null;
+              });
 
-          document.getElementById("clear-btn").addEventListener("click", () => {
-            // chart.polygons.forEach((polygon) => {
-            //   console.log("hello");
-            // });
-            // console.log(chart.polygons[0].points);
-            if (chart.polygons !== undefined) {
-              //   console.log(chart.polygons[0].points);
-              console.log(JSON.stringify(chart.polygons[0].points));
-            }
-            // chart.polygons.length = 0;
-            // currentPolygon = null;
-          });
-
-          document.addEventListener("mousedown", (e) => {
-            if (e.button == 2) {
-              currentPolygon = null;
-              redrawPolygons(this);
-            }
-          });
-        },
-
-        render: function () {
-          redrawPolygons(this);
-        },
-        click: function (e) {
-          const chart = this,
-            xAxis = chart.xAxis[0],
-            yAxis = chart.yAxis[0];
-
-          if (!currentPolygon) {
-            chart.polygons.push({
-              points: [],
+            document.addEventListener("mousedown", (e) => {
+              if (e.button == 2) {
+                currentPolygon = null;
+                redrawPolygons(this);
+              }
             });
-            currentPolygon = chart.polygons[chart.polygons.length - 1];
-          }
+          },
 
-          currentPolygon.points.push({
-            x: xAxis.toValue(chart.mouseDownX),
-            y: yAxis.toValue(chart.mouseDownY),
-          });
+          render: function () {
+            redrawPolygons(this);
+          },
+          click: function (e) {
+            const chart = this,
+              xAxis = chart.xAxis[0],
+              yAxis = chart.yAxis[0];
 
-          redrawPolygons(this);
+            if (!currentPolygon) {
+              chart.polygons.push({
+                points: [],
+              });
+              currentPolygon = chart.polygons[chart.polygons.length - 1];
+            }
+
+            currentPolygon.points.push({
+              x: xAxis.toValue(chart.mouseDownX),
+              y: yAxis.toValue(chart.mouseDownY),
+            });
+
+            redrawPolygons(this);
+          },
         },
+        plotBackgroundImage: image !== "" ? URL.createObjectURL(image) : null,
+        // width: "400",
+        type: "spline",
       },
-      plotBackgroundImage: image !== "" ? URL.createObjectURL(image) : null,
-      width: "400",
-      type: "spline",
-    },
-    title: {
-      text: "muhahaha",
-    },
-    series: [
-      {
-        //   data: line1Bezier2.map((item) => [item.x, item.y]),
-        //   name: "Line Data1",
-        // },
-        // {
-        //   data: line2Bezier2.map((item) => [item.x, item.y]),
-        //   name: "Line Data2",
-        // },
-        // {
-        //   data: line3Bezier2.map((item) => [item.x, item.y]),
-        //   name: "Line Data3",
-        // },
-        // {
-        //   data: line4Bezier2.map((item) => [item.x, item.y]),
-        //   name: "Line Data4",
-        // },
-        // {
-        //   data: line5Bezier2.map((item) => [item.x, item.y]),
-        //   name: "Line Data5",
-        // },
-        // {
-        //   data: line6Bezier2.map((item) => [item.x, item.y]),
-        //   name: "Line Data6",
-        // },
-        // {
-        //   data: line7Bezier2.map((item) => [item.x, item.y]),
-        //   name: "Line Data7",
-        // },
-        // {
-        //   data: line8Bezier2.map((item) => [item.x, item.y]),
-        //   name: "Line Data8",
-        // },
-        // {
-        //   data: line9Bezier2.map((item) => [item.x, item.y]),
-        //   name: "Line Data9",
-        // },
-        // {
-        //   data: line10Bezier2.map((item) => [item.x, item.y]),
-        //   name: "Line Data10",
+      title: {
+        text: "muhahaha",
       },
-    ],
+      series: [{}],
+      xAxis: { type: "logarithmic" },
 
-    plotOptions: {
-      series: {
-        marker: {
-          enabled: false,
-          states: {
-            hover: {
-              enabled: false,
+      plotOptions: {
+        series: {
+          marker: {
+            enabled: false,
+            states: {
+              hover: {
+                enabled: false,
+              },
             },
           },
         },
       },
-    },
-    xAxis: {
-      min: 0,
-      max: 40000,
-      tickPositions: [0, 10000, 20000, 30000, 40000],
-    },
-    yAxis: {
-      min: 0,
-      max: 3500,
-      tickPositions: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
-    },
-  };
+      xAxis: {
+        min: 0,
+        max: 40000,
+        tickPositions: [0, 10000, 20000, 30000, 40000],
+      },
+      yAxis: {
+        min: 0,
+        max: 3500,
+        tickPositions: [0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
+      },
+    };
+    return options;
+  }, []);
 
   return (
     <div>
@@ -227,3 +191,43 @@ export const DrawBezier2 = () => {
     </div>
   );
 };
+export default DrawBezier2;
+
+// data: line1Bezier2.map((item) => [item.x, item.y]),
+//   name: "Line Data1",
+// },
+// {
+//   data: line2Bezier2.map((item) => [item.x, item.y]),
+//   name: "Line Data2",
+// },
+// {
+//   data: line3Bezier2.map((item) => [item.x, item.y]),
+//   name: "Line Data3",
+// },
+// {
+//   data: line4Bezier2.map((item) => [item.x, item.y]),
+//   name: "Line Data4",
+// },
+// {
+//   data: line5Bezier2.map((item) => [item.x, item.y]),
+//   name: "Line Data5",
+// },
+// {
+//   data: line6Bezier2.map((item) => [item.x, item.y]),
+//   name: "Line Data6",
+// },
+// {
+//   data: line7Bezier2.map((item) => [item.x, item.y]),
+//   name: "Line Data7",
+// },
+// {
+//   data: line8Bezier2.map((item) => [item.x, item.y]),
+//   name: "Line Data8",
+// },
+// {
+//   data: line9Bezier2.map((item) => [item.x, item.y]),
+//   name: "Line Data9",
+// },
+// {
+//   data: line10Bezier2.map((item) => [item.x, item.y]),
+//   name: "Line Data10",

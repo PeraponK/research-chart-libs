@@ -4,7 +4,7 @@ import Highcharts, { Legend, chart, charts, color } from "highcharts";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
 
-export const LinePlot = () => {
+const LinePlot = () => {
   HighchartsBoost(Highcharts);
   HighchartsZoom(Highcharts);
   const getData = () => {
@@ -221,3 +221,4 @@ export const LinePlot = () => {
 
   return <HighchartsReact highcharts={Highcharts} options={options} />;
 };
+export default LinePlot;

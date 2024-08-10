@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
 
-export const MarkyAxis = () => {
+const MarkyAxis = () => {
   HighchartsBoost(Highcharts);
   HighchartsZoom(Highcharts);
   const getData = () => {
@@ -79,8 +79,8 @@ export const MarkyAxis = () => {
       chart: {
         zoomType: "x",
         events: { click: click },
-        height: 700,
-        width: 1500,
+        height: 400,
+        // width: 1500,
       },
       title: {
         text: "My chart",
@@ -88,6 +88,7 @@ export const MarkyAxis = () => {
       subtitle: {
         text: "try subtitle",
       },
+
       //   plotOptions: {
       //     series: {
       //       marker: {
@@ -135,3 +136,4 @@ export const MarkyAxis = () => {
     />
   );
 };
+export default MarkyAxis;

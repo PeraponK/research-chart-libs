@@ -6,47 +6,69 @@ import HighchartsBoost from "highcharts/modules/boost";
 
 import React, { useMemo } from "react";
 
-export const ScatterPlot = ({ dataset, drawEllipse }) => {
+// export const ScatterPlot = ({ series }) => {
+export const ScatterPlot = ({ series, drawEllipse }) => {
   HighchartsBoost(Highcharts);
-
+  // console.log(JSON.stringify(series));
   let options = useMemo(() => {
     let option = {
+      plotOptions: {},
+
       boost: {
         useGPUTranslations: true,
-        seriesThreshold: 5,
+        //   // seriesThreshold: 5,
       },
       chart: {
-        height: 400,
-        width: 720,
-        type: "scatter",
         zooming: {
           type: "xy",
         },
+
+        // width: 720,
+        type: "scatter",
+        zoomType: "xy",
         events: {
           redraw: function () {
-            drawEllipse(this);
+            // drawEllipse(this);
           },
           load: function () {
-            drawEllipse(this);
+            // drawEllipse(this);
           },
         },
       },
+      xAxis: {
+        type: "linear",
+        title: {
+          text: "x",
+        },
+        min: 600,
+        max: 1000,
+      },
+
+      // yAxis: {
+      //   type: "linear",
+      // },
+
       yAxis: { min: 90, max: 140 },
-      xAxis: { min: 600, max: 1000 },
+      // xAxis: { min: 600, max: 1000 },
+      // yAxis: { min: -100, max: 200 },
+      // xAxis: { min: 0, max: 1000 },
 
       // ...props,
+      // tooltip: {
+      //   formatter: function () {
+      //     return "x :<b>" + this.x + "</b><br/>" + "y: " + this.y;
+      //   },
+      // },
 
       series: [
         {
-          custom: {
-            lassoSelection: true,
-          },
+          // boostThreshold: 50000,
           name: "data1",
-          data: dataset,
+          data: series,
           showInLegend: false,
           allowPointSelect: true,
           marker: {
-            radius: 2,
+            radius: 1,
             states: {
               select: {
                 fillColor: "blue",
@@ -54,16 +76,25 @@ export const ScatterPlot = ({ dataset, drawEllipse }) => {
               },
             },
           },
+
+          // point: {
+          //   events: {
+          //     click: function () {
+          //       alert("x : " + this.x + " y : " + this.y);
+          //     },
+          //   },
+          // },
         },
       ],
     };
     return option;
-  }, [drawEllipse, dataset]);
+    // }, [drawEllipse, series]);
+  }, [series]);
+
   return (
     <HighchartsReact
       highcharts={Highcharts}
       options={options}
-
       // constructorType={"stockChart"}
     />
   );

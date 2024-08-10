@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsZoom from "highcharts/modules/mouse-wheel-zoom";
 
-export const LineSD = () => {
+const LineSD = () => {
   HighchartsBoost(Highcharts);
   HighchartsZoom(Highcharts);
   const getData = () => {
@@ -165,8 +165,8 @@ export const LineSD = () => {
       chart: {
         zoomType: "x",
         // events: { click: click },
-        height: 700,
-        width: 1500,
+        height: 400,
+        // width: 1500,
       },
       title: {
         text: "My chart",
@@ -278,3 +278,4 @@ export const LineSD = () => {
     />
   );
 };
+export default LineSD;

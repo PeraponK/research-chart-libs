@@ -3,51 +3,51 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
-import { parsedArrayData, readCSV } from "./data";
 import { ScatterPlot } from "./Plot";
 import zIndex from "@mui/material/styles/zIndex";
 
-export const Scatter = () => {
-  const [data, setData] = useState([]);
-  const [clusterData, setClusterData] = useState([]);
-  const [check, setCheck] = useState([]);
+const Scatter = (props) => {
+  const { series, drawData } = props;
+  // console.log(series, drawData);
+  console.log(series);
+  // const [data, setData] = useState([]);
+  // const [clusterData, setClusterData] = useState([]);
+  // const [check, setCheck] = useState([]);
 
-  // const test = async () => {
-  //   let parsedData = await readCSV("public/master_tablein-1.csv");
-  //   setData(parsedData);
-  // };
+  // // const test = async () => {
+  // //   let parsedData = await readCSV("public/master_tablein-1.csv");
+  // //   setData(parsedData);
+  // // };
 
-  const csvFilePath = "public/master_tablein-1.csv";
-  const data_2023 = "public/data_2023.csv";
-  const data_2024 = "public/data_2024.csv";
+  // const csvFilePath = "public/master_tablein-1.csv";
+  // const data_2023 = "public/data_2023.csv";
+  // const data_2024 = "public/data_2024.csv";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      let parsedData = await parsedArrayData([data_2023, data_2024]);
-      setData(parsedData);
-    };
-    fetchData();
-  }, []);
-  //degree pass
-  const cluster_22 = "public/cluster_22.csv";
-  //degree pass
-  const cluster_31 = "public/cluster_31.csv";
-  //degree pass
-  const cluster_38 = "public/cluster_38.csv";
-  const cluster_40 = "public/cluster_40.csv";
-  const cluster_53 = "public/cluster_53.csv";
-  const cluster_55 = "public/cluster_55.csv";
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     let parsedData = await parsedArrayData([data_2023, data_2024]);
+  //     setData(parsedData);
+  //   };
+  //   fetchData();
+  // }, []);
 
-  const cluster_data = cluster_22;
+  // const cluster_22 = "public/cluster_22.csv";
+  // const cluster_31 = "public/cluster_31.csv";
+  // const cluster_38 = "public/cluster_38.csv";
+  // const cluster_40 = "public/cluster_40.csv";
+  // const cluster_53 = "public/cluster_53.csv";
+  // const cluster_55 = "public/cluster_55.csv";
 
-  useEffect(() => {
-    const fetchCluster = async () => {
-      let parsedData = await readCSV(cluster_data);
-      setClusterData(parsedData);
-      setCheck(cluster_data);
-    };
-    fetchCluster();
-  }, []);
+  // const cluster_data = cluster_22;
+
+  // useEffect(() => {
+  //   const fetchCluster = async () => {
+  //     let parsedData = await readCSV(cluster_data);
+  //     setClusterData(parsedData);
+  //     setCheck(cluster_data);
+  //   };
+  //   fetchCluster();
+  // }, []);
 
   // const cluster1 = {
   //   clusterId: 1,
@@ -103,7 +103,7 @@ export const Scatter = () => {
     (chart) => {
       //------------------------------------------------------------------------------ลองเอา่ค่าตรง .rect มาบวกลบแล้วค่อยทำเป็นpixelดูไหม?
       if (chart.xAxis !== undefined && chart.yAxis !== undefined) {
-        const cResult = calculateClusterParameters(clusterData);
+        const cResult = calculateClusterParameters(drawData);
 
         // Add a custom circle to the chart using the renderer
 
@@ -174,63 +174,65 @@ export const Scatter = () => {
         });
       }
     },
-    [clusterData]
+    [drawData]
   );
 
-  const dataScatter = useMemo(() => {
-    let getData = [];
-    if (check === "public/cluster_22.csv") {
-      data.map((item) =>
-        getData.push([
-          parseFloat(item.NYA_DCS_G6710A_Cylinder_1),
-          parseFloat(item.NYA_DCS_G6710A_Intake_Manifold),
-        ])
-      );
-    } else if (check === "public/cluster_31.csv") {
-      data.map((item) =>
-        getData.push([
-          parseFloat(item.NYA_DCS_G6710A_Cylinder_10),
-          parseFloat(item.NYA_DCS_G6710A_Intake_Manifold),
-        ])
-      );
-    } else if (check === "public/cluster_38.csv") {
-      data.map((item) =>
-        getData.push([
-          parseFloat(item.NYA_DCS_G6710A_CoolantTemp_LB),
-          parseFloat(item.NYA_DCS_G6710A_OilTemp),
-        ])
-      );
-    } else if (check === "public/cluster_40.csv") {
-      data.map((item) =>
-        getData.push([
-          parseFloat(item.NYA_DCS_G6710A_Intake_Manifold),
-          parseFloat(item.NYA_DCS_G6710A_CoolantTemp_LB),
-        ])
-      );
-    } else if (check === "public/cluster_53.csv") {
-      data.map((item) =>
-        getData.push([
-          parseFloat(item.NYA_DCS_G6710A_Rear_Bear_Temp),
-          parseFloat(item.NYA_DCS_VI6712A_VELOCITY),
-        ])
-      );
-    } else if (check === "public/cluster_55.csv") {
-      data.map((item) =>
-        getData.push([
-          parseFloat(item.NYA_DCS_VI6710A_VELOCITY),
-          parseFloat(item.AVG_ALL_CYLINDER),
-        ])
-      );
-    }
-    return getData;
-  }, [data]);
+  // const dataScatter = useMemo(() => {
+  //   let getData = [];
+  //   if (check === "public/cluster_22.csv") {
+  //     data.map((item) =>
+  //       getData.push([
+  //         parseFloat(item.NYA_DCS_G6710A_Cylinder_1),
+  //         parseFloat(item.NYA_DCS_G6710A_Intake_Manifold),
+  //       ])
+  //     );
+  //   } else if (check === "public/cluster_31.csv") {
+  //     data.map((item) =>
+  //       getData.push([
+  //         parseFloat(item.NYA_DCS_G6710A_Cylinder_10),
+  //         parseFloat(item.NYA_DCS_G6710A_Intake_Manifold),
+  //       ])
+  //     );
+  //   } else if (check === "public/cluster_38.csv") {
+  //     data.map((item) =>
+  //       getData.push([
+  //         parseFloat(item.NYA_DCS_G6710A_CoolantTemp_LB),
+  //         parseFloat(item.NYA_DCS_G6710A_OilTemp),
+  //       ])
+  //     );
+  //   } else if (check === "public/cluster_40.csv") {
+  //     data.map((item) =>
+  //       getData.push([
+  //         parseFloat(item.NYA_DCS_G6710A_Intake_Manifold),
+  //         parseFloat(item.NYA_DCS_G6710A_CoolantTemp_LB),
+  //       ])
+  //     );
+  //   } else if (check === "public/cluster_53.csv") {
+  //     data.map((item) =>
+  //       getData.push([
+  //         parseFloat(item.NYA_DCS_G6710A_Rear_Bear_Temp),
+  //         parseFloat(item.NYA_DCS_VI6712A_VELOCITY),
+  //       ])
+  //     );
+  //   } else if (check === "public/cluster_55.csv") {
+  //     data.map((item) =>
+  //       getData.push([
+  //         parseFloat(item.NYA_DCS_VI6710A_VELOCITY),
+  //         parseFloat(item.AVG_ALL_CYLINDER),
+  //       ])
+  //     );
+  //   }
+  //   return getData;
+  // }, [data]);
 
   return (
     <div>
-      <ScatterPlot dataset={dataScatter} drawEllipse={drawEllipse} />
+      <ScatterPlot series={series} drawEllipse={drawEllipse} />
     </div>
   );
 };
+
+export default Scatter;
 
 //
 // useEffect(() => {

@@ -14,7 +14,7 @@ import {
   line9,
 } from "./data";
 
-export const DrawBezier = () => {
+const DrawBezier = () => {
   const chartRef = useRef();
   let isDrawing = false;
   let path = [];
@@ -30,76 +30,77 @@ export const DrawBezier = () => {
   //       .add();
   //   }, []);
 
-  useEffect(() => {
-    const handleMouseDown = (e) => {
-      isDrawing = true;
-      console.log(JSON.stringify(plot));
-      plot = [];
-      path = [];
-      const xAxisValue = chartRef.current.chart.xAxis[0].toValue(e.chartX);
-      const yAxisValue = chartRef.current.chart.yAxis[0].toValue(e.chartY);
-      path.push(["M", e.chartX, e.chartY]);
-      plot.push(["M", xAxisValue, yAxisValue]);
-    };
+  // useEffect(() => {
+  //   const handleMouseDown = (e) => {
+  //     isDrawing = true;
+  //     console.log(JSON.stringify(plot));
+  //     plot = [];
+  //     path = [];
+  //     const xAxisValue = chartRef.current.chart.xAxis[0].toValue(e.chartX);
+  //     const yAxisValue = chartRef.current.chart.yAxis[0].toValue(e.chartY);
+  //     path.push(["M", e.chartX, e.chartY]);
+  //     plot.push(["M", xAxisValue, yAxisValue]);
+  //   };
 
-    const handleMouseMove = (e) => {
-      if (isDrawing) {
-        const xAxisValue = chartRef.current.chart.xAxis[0].toValue(e.chartX);
-        const yAxisValue = chartRef.current.chart.yAxis[0].toValue(e.chartY);
-        path.push(["L", e.chartX, e.chartY]);
-        plot.push(["L", xAxisValue, yAxisValue]);
-        chartRef.current.chart.renderer
-          .path(path)
-          .attr({
-            "stroke-width": 2,
-            stroke: "red",
-          })
-          .add();
-        // console.log(path);
-      }
-    };
+  //   const handleMouseMove = (e) => {
+  //     if (isDrawing) {
+  //       const xAxisValue = chartRef.current.chart.xAxis[0].toValue(e.chartX);
+  //       const yAxisValue = chartRef.current.chart.yAxis[0].toValue(e.chartY);
+  //       path.push(["L", e.chartX, e.chartY]);
+  //       plot.push(["L", xAxisValue, yAxisValue]);
+  //       chartRef.current.chart.renderer
+  //         .path(path)
+  //         .attr({
+  //           "stroke-width": 2,
+  //           stroke: "red",
+  //         })
+  //         .add();
+  //       // console.log(path);
+  //     }
+  //   };
 
-    const handleMouseUp = () => {
-      isDrawing = false;
-    };
+  //   const handleMouseUp = () => {
+  //     isDrawing = false;
+  //   };
 
-    if (chartRef.current && chartRef.current.chart) {
-      chartRef.current.chart.container.addEventListener(
-        "mousedown",
-        handleMouseDown
-      );
-      chartRef.current.chart.container.addEventListener(
-        "mousemove",
-        handleMouseMove
-      );
-      chartRef.current.chart.container.addEventListener(
-        "mouseup",
-        handleMouseUp
-      );
-    }
+  //   if (chartRef.current && chartRef.current.chart) {
+  //     chartRef.current.chart.container.addEventListener(
+  //       "mousedown",
+  //       handleMouseDown
+  //     );
+  //     chartRef.current.chart.container.addEventListener(
+  //       "mousemove",
+  //       handleMouseMove
+  //     );
+  //     chartRef.current.chart.container.addEventListener(
+  //       "mouseup",
+  //       handleMouseUp
+  //     );
+  //   }
 
-    return () => {
-      if (chartRef.current && chartRef.current.chart) {
-        chartRef.current.chart.container.removeEventListener(
-          "mousedown",
-          handleMouseDown
-        );
-        chartRef.current.chart.container.removeEventListener(
-          "mousemove",
-          handleMouseMove
-        );
-        chartRef.current.chart.container.removeEventListener(
-          "mouseup",
-          handleMouseUp
-        );
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (chartRef.current && chartRef.current.chart) {
+  //       chartRef.current.chart.container.removeEventListener(
+  //         "mousedown",
+  //         handleMouseDown
+  //       );
+  //       chartRef.current.chart.container.removeEventListener(
+  //         "mousemove",
+  //         handleMouseMove
+  //       );
+  //       chartRef.current.chart.container.removeEventListener(
+  //         "mouseup",
+  //         handleMouseUp
+  //       );
+  //     }
+  //   };
+  // }, []);
 
   const options = {
     chart: {
       //   plotBackgroundImage: "images/pic3.png",
-      width: "400",
+      // width: "400",
+      zoomType: "xy",
       type: "spline",
     },
     title: {
@@ -169,3 +170,4 @@ export const DrawBezier = () => {
     </div>
   );
 };
+export default DrawBezier;

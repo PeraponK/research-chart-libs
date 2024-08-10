@@ -4,7 +4,7 @@ import HighchartsReact from "highcharts-react-official";
 import { Button, Grid, IconButton, TextField, Typography } from "@mui/material";
 import { LocalPizza } from "@mui/icons-material";
 
-export const LineScale = () => {
+const LineScale = () => {
   const handleSetX = () => {
     setAddX({
       min: parseInt(minX),
@@ -19,6 +19,7 @@ export const LineScale = () => {
       tickPositions: findTickPosition(minY, maxY),
     });
   };
+
   const [minX, setMinX] = useState(null);
   const [minY, setMinY] = useState(null);
   const [maxX, setMaxX] = useState(null);
@@ -120,3 +121,4 @@ export const LineScale = () => {
     </Grid>
   );
 };
+export default LineScale;
