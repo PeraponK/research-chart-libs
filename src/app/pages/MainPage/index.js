@@ -20,6 +20,9 @@ import {
 import { ScatterPlot } from "@/app/components/ChartLibs/Highcharts/Scatter/Plot";
 import { jsonDataScatter } from "@/app/components/ChartLibs/Highcharts/Scatter/Plot/data";
 import PlotyScatterPlot from "@/app/components/ChartLibs/ploty/Scatter";
+import { TestCrop } from "@/app/components/Crop/react-easy-crop";
+import ImageCropper from "@/app/components/Crop/react-image-crop";
+import StepperBezier from "@/app/components/Stepper";
 import { Box, Grid } from "@mui/material";
 import React, { useEffect, useMemo, useState, Suspense } from "react";
 
@@ -69,13 +72,18 @@ const MainPage = () => {
         spacing={2}
       >
         <Grid item xs={12} sm={12} md={12} lg={6}>
+          <StepperBezier />
+          {/* <ImageCropper /> */}
+          {/* <TestCrop /> */}
           {/* <Waterfall /> */}
           {/* <ScatterPlot series={dataScatter} /> */}
           {/* <HighStock /> */}
           {/* <LineSD /> */}
-          <DrawBezierEchart />
+          {/* <DrawBezierEchart /> */}
           {/* <OnEvent /> */}
           {/* <DrawBezierV3 /> */}
+          {/* <EchartBezierPlot /> */}
+
           <Suspense fallback={<div>Loading...</div>}></Suspense>
         </Grid>
 

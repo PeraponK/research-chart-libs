@@ -196,6 +196,7 @@ const DrawBezierEchart = () => {
         y: item.y,
       }));
       const getPath = handleGetPath(pathPoint);
+      console.log("path for draw curve : ", JSON.stringify(getPath));
       // console.log(getPath);
       return getPath.map((item, index) => ({
         id: `curve${index}`,
@@ -265,6 +266,7 @@ const DrawBezierEchart = () => {
   //   updateBackgroundImage();
   //   window.addEventListener("resize", updateBackgroundImage);
   // }, [image]);
+  const handleGetCurve = () => {};
 
   const updateBackgroundImage = () => {
     const chart = chartRef.current.getEchartsInstance();
@@ -285,6 +287,7 @@ const DrawBezierEchart = () => {
         ._percentWindow[0];
       const yAxisEnd = chart.getModel().getComponent("yAxis").__dzAxisProxy
         ._percentWindow[1];
+      console.log("this", chart.getModel().getComponent("yAxis"));
       // const pointX = chart.convertToPixel("grid", [0, 100]);
       // const pointY = chart.convertToPixel("grid", [0, 100]);
       // const newWidth = rect.width / ((xAxisTest1 - xAxisTest) / 100);
@@ -369,7 +372,7 @@ const DrawBezierEchart = () => {
   };
 
   useEffect(() => {
-    console.log(points);
+    // console.log(points);
   }, [points]);
 
   useEffect(() => {
@@ -403,18 +406,6 @@ const DrawBezierEchart = () => {
       const chart = chartRef.current.getEchartsInstance();
       chart.on("dataZoom", function (event) {
         handleZoom();
-        // const xAxisTest = chart.getModel().getComponent("xAxis").__dzAxisProxy
-        //   ._percentWindow[0];
-        // const xAxisTest1 = chart.getModel().getComponent("xAxis").__dzAxisProxy
-        //   ._percentWindow[1];
-        // const yAxisTest = chart.getModel().getComponent("yAxis").__dzAxisProxy
-        //   ._percentWindow[0];
-        // const yAxisTest1 = chart.getModel().getComponent("yAxis").__dzAxisProxy
-        //   ._percentWindow[1];
-
-        // // const yAxis = chart.getModel().getModel().getComponent("yAxis");
-        // console.log("xtest0", xAxisTest, "xtest1", xAxisTest1);
-        // console.log("ytest0", yAxisTest, "ytest1", yAxisTest1);
       });
     }
   });
@@ -507,6 +498,7 @@ const DrawBezierEchart = () => {
   return (
     <div>
       <button onClick={handleSetMode}>swithc</button>
+      <button onClick={handleGetCurve}>curve</button>
       <ReactECharts
         option={options}
         // onEvents={onEvents}
