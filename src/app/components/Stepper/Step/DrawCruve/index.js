@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactECharts from "echarts-for-react";
 
-const StepDrawCurve = ({ xAxis, yAxis, img }) => {
+const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
   const [grid, setGrid] = useState(null);
   const chartRef = useRef();
   const [drawMode, setDrawMode] = useState(true);
-  const [points, setPoints] = useState([]);
+  // const [points, setPoints] = useState([]);
   const drawModeRef = useRef(drawMode);
   const [dragPoint, setDragPoint] = useState(null);
   const [zoom, setZoom] = useState(false);
@@ -45,7 +45,8 @@ const StepDrawCurve = ({ xAxis, yAxis, img }) => {
       y: point[1],
     };
     if (drawModeRef.current === true) {
-      setPoints((prev) => [...prev, newPoint]);
+      // setPoints((prev) => [...prev, newPoint]);
+      onPointUpdate((prev) => [...prev, newPoint]);
     }
   };
 
@@ -68,7 +69,8 @@ const StepDrawCurve = ({ xAxis, yAxis, img }) => {
         let pointValue = chart.convertFromPixel("grid", pointClick);
         const updatePoint = [...points];
         updatePoint[dragPoint] = { x: pointValue[0], y: pointValue[1] };
-        setPoints(updatePoint);
+        // setPoints(updatePoint);
+        onPointUpdate(updatePoint);
       });
     }
   };
@@ -182,6 +184,36 @@ const StepDrawCurve = ({ xAxis, yAxis, img }) => {
   };
 
   const handleGetCurve = () => {};
+
+  const handleClear = () => {
+    if (chartRef.current !== undefined) {
+      onPointUpdate([]);
+      const chart = chartRef.current.getEchartsInstance();
+      chart.setOption(
+        {
+          graphic: {
+            elements: [],
+          },
+        },
+        {
+          replaceMerge: ["graphic"],
+        }
+      );
+    }
+
+    // if (chartRef.current !== undefined) {
+    //   console.log("in condition and chartref");
+    //   const chart = chartRef.current.getEchartsInstance();
+    //   chart.setOption({
+    //     // graphic: {
+    //     //   elements: [],
+    //     // },
+    //     graphic: {
+    //       elements: [[], []],
+    //     },
+    //   });
+    // }
+  };
 
   useEffect(() => {
     console.log("usefdrawmode:", drawMode);
@@ -299,6 +331,7 @@ const StepDrawCurve = ({ xAxis, yAxis, img }) => {
     <div>
       <button onClick={handleSetMode}>swithc</button>
       <button onClick={handleGetCurve}>curve</button>
+      <button onClick={handleClear}>Clear</button>
       DrawCurve
       <ReactECharts
         option={option}

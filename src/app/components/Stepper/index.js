@@ -9,6 +9,7 @@ import StepUploadImage from "./Step/UploadImage";
 import StepSetAxes from "./Step/SetAxes";
 import StepDrawCurve from "./Step/DrawCruve";
 import StepReview from "./Step/Review";
+import { active } from "d3";
 
 const steps = ["UploadImage", "SetAxes", "DrawCurve", "Review"];
 
@@ -17,9 +18,14 @@ const StepperBezier = () => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [xAxis, setXAxis] = React.useState();
   const [yAxis, setYAxis] = React.useState();
+  const [points, setPoints] = React.useState([]);
 
   const handleSetImage = (image) => {
     setImage(image);
+  };
+
+  const handleSetPoint = (val) => {
+    setPoints(val);
   };
 
   const isStepOptional = (step) => {
@@ -36,6 +42,16 @@ const StepperBezier = () => {
 
   const handleReset = () => {
     setActiveStep(0);
+    setImage(null);
+    setActiveStep(0);
+    setXAxis();
+    setYAxis();
+    setPoints([]);
+    // const [img, setImage] = React.useState(null);
+    // const [activeStep, setActiveStep] = React.useState(0);
+    // const [xAxis, setXAxis] = React.useState();
+    // const [yAxis, setYAxis] = React.useState();
+    // const [points, setPoints] = React.useState([]);
   };
 
   const handleXAxis = (xAxis) => {
@@ -90,9 +106,20 @@ const StepperBezier = () => {
                   />
                 </div>
               ) : activeStep === 2 ? (
-                <StepDrawCurve xAxis={xAxis} yAxis={yAxis} img={img} />
+                <StepDrawCurve
+                  xAxis={xAxis}
+                  yAxis={yAxis}
+                  img={img}
+                  onPointUpdate={handleSetPoint}
+                  points={points}
+                />
               ) : (
-                <StepReview />
+                <StepReview
+                  points={points}
+                  img={img}
+                  xAxis={xAxis}
+                  yAxis={yAxis}
+                />
               )}
             </div>
           </Box>
