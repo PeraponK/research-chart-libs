@@ -17,11 +17,6 @@ const StepReview = ({ points, img, xAxis, yAxis }) => {
     "yellow",
   ]);
 
-  // useEffect(() => {
-  //   drawCurve();
-  //   updateBackgroundImage();
-  // }, []);
-
   const onChartReady = () => {
     if (chartRef.current !== undefined) {
       drawCurve();
@@ -32,14 +27,11 @@ const StepReview = ({ points, img, xAxis, yAxis }) => {
   const drawCurve = () => {
     if (chartRef.current !== undefined) {
       const chart = chartRef.current.getEchartsInstance();
-      // console.log("drawCurve problem", chart);
       const pathPoint = points.map((item) => ({
         x: item.x,
         y: item.y,
       }));
       const getPath = handleGetPath(pathPoint);
-      console.log("path for draw curve : ", JSON.stringify(getPath));
-      // console.log(getPath);
       return getPath.map((item, index) => ({
         id: `curve${index}`,
 
@@ -60,7 +52,6 @@ const StepReview = ({ points, img, xAxis, yAxis }) => {
           lineWidth: 2,
         },
       }));
-      // return draw;
     }
   };
 
@@ -78,14 +69,12 @@ const StepReview = ({ points, img, xAxis, yAxis }) => {
   const updateBackgroundImage = () => {
     const chart = chartRef.current.getEchartsInstance();
     const rect = chart._api.getCoordinateSystems()[0].getRect();
-    // console.log("rect", rect);
     let tmpCanvas;
     let tmpCanvasCtx;
     if (img !== null) {
       const image = new Image();
       image.src = img;
 
-      console.log("pass condition");
       if (!tmpCanvas) {
         tmpCanvas = document.createElement("canvas");
         tmpCanvasCtx = tmpCanvas.getContext("2d");
@@ -98,29 +87,14 @@ const StepReview = ({ points, img, xAxis, yAxis }) => {
         ._percentWindow[0];
       const yAxisEnd = chart.getModel().getComponent("yAxis").__dzAxisProxy
         ._percentWindow[1];
-      console.log("this", chart.getModel().getComponent("yAxis"));
-      // const pointX = chart.convertToPixel("grid", [0, 100]);
-      // const pointY = chart.convertToPixel("grid", [0, 100]);
-      // const newWidth = rect.width / ((xAxisTest1 - xAxisTest) / 100);
-      // const newHeight = rect.height / ((yAxisTest1 - yAxisTest) / 100);
-      // const newX = rect.x / ((xAxisTest1 - xAxisTest) / 100);
-      // const newY = rect.y / ((xAxisTest1 - xAxisTest) / 100);
-      // console.log("x start : ", xAxisStart);
+
       const imageWidth = image.width;
       const imageHeight = image.height;
-      console.log(
-        "img width height ystart yend ",
-        imageWidth,
-        imageHeight,
-        yAxisStart,
-        yAxisEnd
-      );
-      //ปัญหาคือครึ่งบนสลับกับครึ่งล่าง
+
       const sx = (xAxisStart / 100) * imageWidth;
       const sy = ((100 - yAxisEnd) / 100) * imageHeight;
       const swidth = ((xAxisEnd - xAxisStart) / 100) * imageWidth;
       const sheight = ((yAxisEnd - yAxisStart) / 100) * imageHeight;
-      console.log(sx, sy, swidth, sheight);
       tmpCanvas.width = rect.width + rect.x;
       tmpCanvas.height = rect.height + rect.y;
 
@@ -148,7 +122,6 @@ const StepReview = ({ points, img, xAxis, yAxis }) => {
   };
 
   const handleZoom = () => {
-    // console.log("In handleZoom");
     updateBackgroundImage();
     setZoom(!zoom);
   };

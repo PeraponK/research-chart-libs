@@ -2,26 +2,24 @@ import React, { useEffect, useMemo, useState } from "react";
 import ReactECharts from "echarts-for-react";
 import { Button, Grid, TextField, Typography } from "@mui/material";
 
-const StepSetAxes = ({ img, onXAxisUpdate, onYAxisUpdate }) => {
-  // console.log("img", img);
+const StepSetAxes = ({ img, setXAxis, setYAxis, xAxis, yAxis }) => {
   const handleSetX = () => {
-    setAddX({
+    setXAxis({
       min: parseInt(minX),
       max: parseInt(maxX),
       axisLabel: { customValues: findTickPosition(minX, maxX, tickX) },
     });
-    onYAxisUpdate(addX);
   };
   const handleSetY = () => {
-    setAddY({
+    setYAxis({
       min: parseInt(minY),
       max: parseInt(maxY),
       axisLabel: { customValues: findTickPosition(minY, maxY, tickY) },
       //show tick amount same as label
-      axisTick: {
-        alignWithLabel: true,
-        customValues: findTickPosition(minY, maxY, tickY),
-      },
+      // axisTick: {
+      //   alignWithLabel: true,
+      //   customValues: findTickPosition(minY, maxY, tickY),
+      // },
     });
   };
 
@@ -32,9 +30,6 @@ const StepSetAxes = ({ img, onXAxisUpdate, onYAxisUpdate }) => {
 
   const [tickY, setTickY] = useState("");
   const [tickX, setTickX] = useState("");
-  const [addX, setAddX] = useState({ min: 0, max: 100 });
-  const [addY, setAddY] = useState({ min: 0, max: 100 });
-  // console.log(addY);
 
   const findTickPosition = (min, max, tick) => {
     const minAxis = parseInt(min);
@@ -42,35 +37,18 @@ const StepSetAxes = ({ img, onXAxisUpdate, onYAxisUpdate }) => {
     const tickAmount = parseInt(tick);
     let setTick = (maxAxis - minAxis) / (tickAmount - 1);
     let tickInterval = [];
-
-    // second solution
     tickInterval.push(minAxis);
     for (let i = 1; i < tickAmount - 1; i++) {
       tickInterval.push(i * setTick + minAxis);
     }
     tickInterval.push(maxAxis);
-
-    console.log(tickInterval);
-
     return tickInterval;
   };
 
-  useEffect(() => {
-    onXAxisUpdate(addX);
-    onYAxisUpdate(addY);
-  }, [addY, addX]);
-
   const option = useMemo(() => {
     const option = {
-      // xAxis: {
-      //   type: "category",
-      //   data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      // },
-      // yAxis: {
-      //   type: "value",
-      // },
-      xAxis: addX,
-      yAxis: addY,
+      xAxis: xAxis,
+      yAxis: yAxis,
 
       series: [
         {
@@ -80,7 +58,7 @@ const StepSetAxes = ({ img, onXAxisUpdate, onYAxisUpdate }) => {
       ],
     };
     return option;
-  }, [addX, addY]);
+  }, [xAxis, yAxis]);
 
   return (
     <div>

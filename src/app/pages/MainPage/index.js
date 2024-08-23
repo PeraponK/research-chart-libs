@@ -75,10 +75,10 @@ const MainPage = () => {
           <StepperBezier />
           {/* <ImageCropper /> */}
           {/* <TestCrop /> */}
-          {/* <Waterfall /> */}
-          {/* <ScatterPlot series={dataScatter} /> */}
-          {/* <HighStock /> */}
-          {/* <LineSD /> */}
+          {/* <Waterfall />
+          <ScatterPlot series={dataScatter} />
+          <HighStock />
+          <LineSD /> */}
           {/* <DrawBezierEchart /> */}
           {/* <OnEvent /> */}
           {/* <DrawBezierV3 /> */}

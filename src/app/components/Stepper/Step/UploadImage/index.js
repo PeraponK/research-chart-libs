@@ -8,19 +8,18 @@ import ReactCrop, {
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
 
-const StepUploadImage = ({ onImageUpdate }) => {
-  const [imgSrc, setImgSrc] = useState(null);
-  const [crop, setCrop] = useState();
+const StepUploadImage = ({
+  imgSrc,
+  setImgSrc,
+  crop,
+  setCrop,
+  setPreviewImage,
+}) => {
   const imgRef = useRef(null);
   const previewCanvasRef = useRef(null);
-  const avatarUrl = useRef("");
 
-  const updateAvatar = (imgSrc) => {
-    avatarUrl.current = imgSrc;
-  };
   const onSelectFile = (e) => {
     const file = e.target.files?.[0];
-    // console.log("file", file);
     if (!file) return;
 
     const reader = new FileReader();
@@ -29,7 +28,6 @@ const StepUploadImage = ({ onImageUpdate }) => {
       const imageUrl = reader.result?.toString() || "";
       imageElement.src = imageUrl;
       setImgSrc(imageUrl);
-      // console.log("imageURL", imageUrl);
     });
     reader.readAsDataURL(file);
   };
@@ -60,11 +58,11 @@ const StepUploadImage = ({ onImageUpdate }) => {
         convertToPixelCrop(crop, image.width, image.height)
       );
       const dataUrl = canvas.toDataURL();
-      // console.log("dataUrl", dataUrl);
-      updateAvatar(dataUrl);
-      onImageUpdate(dataUrl);
+      // setImgSrc(dataUrl);
+      setPreviewImage(dataUrl);
+      // onImageUpdate(dataUrl);
     }
-  }, [imgSrc, crop, onImageUpdate]);
+  }, [imgSrc, crop]);
 
   const setCanvasPreview = (
     image, // HTMLImageElement

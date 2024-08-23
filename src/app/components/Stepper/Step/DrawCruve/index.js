@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactECharts from "echarts-for-react";
+import { throttle } from "echarts";
 
 const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
   const [grid, setGrid] = useState(null);
   const chartRef = useRef();
   const [drawMode, setDrawMode] = useState(true);
-  // const [points, setPoints] = useState([]);
   const drawModeRef = useRef(drawMode);
   const [dragPoint, setDragPoint] = useState(null);
   const [zoom, setZoom] = useState(false);
@@ -21,44 +21,92 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
     "yellow",
   ]);
 
-  // const handleAddImage = (e) => {
-  //   // setImage(URL.createObjectURL(e.target.files[0]));
-
-  //   const file = e.target.files[0];
-
-  //   if (file) {
-  //     const imageUrl = URL.createObjectURL(file); // Generate a URL for the image file
-  //     const img = new Image();
-  //     img.onload = () => {
-  //       setImage(img); // Set the image once it is fully loaded
-  //     };
-  //     img.src = imageUrl; // Set the image source to the object URL
-
-  //     // Optionally, revoke the object URL once it's no longer needed
-  //     return () => URL.revokeObjectURL(imageUrl);
-  //   }
-  // };
+  // console.log("stepdrawcurve xy val :", xAxis, yAxis);
 
   const handleAddPoint = (point) => {
+    console.log("added");
     let newPoint = {
       x: point[0],
       y: point[1],
     };
     if (drawModeRef.current === true) {
-      // setPoints((prev) => [...prev, newPoint]);
       onPointUpdate((prev) => [...prev, newPoint]);
     }
   };
 
   const onChartReady = () => {
+    console.log("onchartready");
+    // setTimeout(() => {
     if (chartRef.current !== undefined) {
+      console.log("hello ready");
+      let xAxisRange = { min: xAxis.min, max: xAxis.max };
+      let yAxisRange = { min: yAxis.min, max: yAxis.max };
+      console.log(xAxisRange, yAxisRange);
       const chart = chartRef.current.getEchartsInstance();
       chart.getZr().on("click", function (event) {
         const point = [event.offsetX, event.offsetY];
         const valuePoint = chart.convertFromPixel("grid", point);
-        handleAddPoint(valuePoint);
+        if (
+          xAxisRange.min <= valuePoint[0] &&
+          xAxisRange.max >= valuePoint[0] &&
+          yAxisRange.min <= valuePoint[1] &&
+          yAxisRange.max >= valuePoint[1]
+        ) {
+          handleAddPoint(valuePoint);
+          console.log("in condition");
+        } else {
+          console.log("not in condition");
+          console.log(
+            xAxisRange.min,
+            "<=",
+            valuePoint[0],
+            xAxisRange.max,
+            ">=",
+            valuePoint[0],
+            yAxisRange.min,
+            "<=",
+            valuePoint[1],
+            yAxisRange.max,
+            ">=",
+            valuePoint[1]
+          );
+        }
       });
+      // chart.on("dataZoom", function (event) {
+      //   console.log("chart.batch", chart.batch);
+      //   const xAxisStart = event.batch[0].startValue || xAxis.min;
+      //   const xAxisEnd = event.batch[0].endValue || xAxis.max;
+      //   const yAxisStart = event.batch[1].startValue || yAxis.min;
+      //   const yAxisEnd = event.batch[1].endValue || yAxis.max;
+      //   console.log(
+      //     "xAxisStart",
+      //     xAxisStart,
+      //     "xAxisEnd",
+      //     xAxisEnd,
+      //     "yAxisStart",
+      //     yAxisStart,
+      //     "yAxisEnd",
+      //     yAxisEnd
+      //   );
+      //   xAxisRange = { min: xAxisStart, max: xAxisEnd };
+      //   yAxisRange = { min: yAxisStart, max: yAxisEnd };
+      //   // updateBackgroundImage();
+      // });
+      chart.on(
+        "dataZoom",
+        throttle((event) => {
+          const xAxisStart = event.batch[0].startValue || xAxis.min;
+          const xAxisEnd = event.batch[0].endValue || xAxis.max;
+          const yAxisStart = event.batch[1].startValue || yAxis.min;
+          const yAxisEnd = event.batch[1].endValue || yAxis.max;
+          xAxisRange = { min: xAxisStart, max: xAxisEnd };
+          yAxisRange = { min: yAxisStart, max: yAxisEnd };
+          updateBackgroundImage();
+        }, 100)
+      );
+      console.log("outofrange", xAxisRange, yAxisRange);
     }
+    // }, 0);
   };
 
   const handleDragPoint = () => {
@@ -69,7 +117,6 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
         let pointValue = chart.convertFromPixel("grid", pointClick);
         const updatePoint = [...points];
         updatePoint[dragPoint] = { x: pointValue[0], y: pointValue[1] };
-        // setPoints(updatePoint);
         onPointUpdate(updatePoint);
       });
     }
@@ -89,7 +136,6 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
   const handleMouseUp = () => {
     if (drawModeRef.current === true) {
       const chart = chartRef.current.getEchartsInstance();
-      // console.log(chart.getOption().xAxis[0]);
       chart.getZr().off("mousemove");
       setDragPoint(null);
     }
@@ -98,14 +144,11 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
   const drawCurve = () => {
     if (chartRef.current !== undefined) {
       const chart = chartRef.current.getEchartsInstance();
-      // console.log("drawCurve problem", chart);
       const pathPoint = points.map((item) => ({
         x: item.x,
         y: item.y,
       }));
       const getPath = handleGetPath(pathPoint);
-      console.log("path for draw curve : ", JSON.stringify(getPath));
-      // console.log(getPath);
       return getPath.map((item, index) => ({
         id: `curve${index}`,
 
@@ -126,7 +169,6 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
           lineWidth: 2,
         },
       }));
-      // return draw;
     }
   };
   useEffect(() => {
@@ -140,7 +182,6 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
     }
   });
   const handleZoom = () => {
-    // console.log("In handleZoom");
     updateBackgroundImage();
     setZoom(!zoom);
   };
@@ -157,7 +198,6 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
   const drawCircle = () => {
     if (chartRef.current !== undefined) {
       const chart = chartRef.current.getEchartsInstance();
-      // console.log(points);
 
       return points.map((item, index) => ({
         id: `cicle${index}`,
@@ -169,21 +209,23 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
           r: 3,
         },
         style: {
-          fill: storeColor[Math.floor(index / 4) % 9], // 0 1 2 3 | 4 5 6 7 | 8 9 10 11 = index / 1
-          // stroke: "red",
+          fill: storeColor[Math.floor(index / 4) % 9],
         },
         onmousedown: () => setDragPoint(index),
       }));
-      // return draw;
     }
   };
 
   const handleSetMode = () => {
-    setDrawMode((prev) => !prev);
-    // console.log(drawModeRef.current);
+    const chart = chartRef.current.getEchartsInstance();
+    // console.log(chart.dispatchAction(payload));
+    chart.dispatchAction({
+      type: "takeGlobalCursor",
+      key: "dataZoomSelect",
+      dataZoomSelectActive: drawMode,
+    }),
+      setDrawMode((prev) => !prev);
   };
-
-  const handleGetCurve = () => {};
 
   const handleClear = () => {
     if (chartRef.current !== undefined) {
@@ -200,101 +242,84 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
         }
       );
     }
+  };
 
-    // if (chartRef.current !== undefined) {
-    //   console.log("in condition and chartref");
-    //   const chart = chartRef.current.getEchartsInstance();
-    //   chart.setOption({
-    //     // graphic: {
-    //     //   elements: [],
-    //     // },
-    //     graphic: {
-    //       elements: [[], []],
-    //     },
-    //   });
-    // }
+  const handleResetZoom = () => {
+    const chart = chartRef.current.getEchartsInstance();
+    console.log("before", xAxis, yAxis);
+    chart.dispatchAction({
+      type: "dataZoom",
+
+      batch: [
+        { start: 0, end: 100 },
+        { start: 0, end: 100 },
+      ],
+    });
+    console.log("after", xAxis, yAxis);
+    // handleZoom();
   };
 
   useEffect(() => {
-    console.log("usefdrawmode:", drawMode);
     drawModeRef.current = drawMode;
   }, [drawMode]);
 
   const updateBackgroundImage = () => {
     const chart = chartRef.current.getEchartsInstance();
     const rect = chart._api.getCoordinateSystems()[0].getRect();
-    // console.log("rect", rect);
     let tmpCanvas;
     let tmpCanvasCtx;
     if (img !== null) {
       const image = new Image();
       image.src = img;
+      image.onload = () => {
+        if (!tmpCanvas) {
+          tmpCanvas = document.createElement("canvas");
+          tmpCanvasCtx = tmpCanvas.getContext("2d");
+        }
+        const xAxisStart = chart.getModel().getComponent("xAxis").__dzAxisProxy
+          ._percentWindow[0];
+        const xAxisEnd = chart.getModel().getComponent("xAxis").__dzAxisProxy
+          ._percentWindow[1];
+        const yAxisStart = chart.getModel().getComponent("yAxis").__dzAxisProxy
+          ._percentWindow[0];
+        const yAxisEnd = chart.getModel().getComponent("yAxis").__dzAxisProxy
+          ._percentWindow[1];
+        // console.log("chart model", chart.getModel().getComponent("xAxis"));
+        // console.log("updatebg:", xAxisStart, xAxisEnd, yAxisStart, yAxisEnd);
 
-      console.log("pass condition");
-      if (!tmpCanvas) {
-        tmpCanvas = document.createElement("canvas");
-        tmpCanvasCtx = tmpCanvas.getContext("2d");
-      }
-      const xAxisStart = chart.getModel().getComponent("xAxis").__dzAxisProxy
-        ._percentWindow[0];
-      const xAxisEnd = chart.getModel().getComponent("xAxis").__dzAxisProxy
-        ._percentWindow[1];
-      const yAxisStart = chart.getModel().getComponent("yAxis").__dzAxisProxy
-        ._percentWindow[0];
-      const yAxisEnd = chart.getModel().getComponent("yAxis").__dzAxisProxy
-        ._percentWindow[1];
-      console.log("this", chart.getModel().getComponent("yAxis"));
-      // const pointX = chart.convertToPixel("grid", [0, 100]);
-      // const pointY = chart.convertToPixel("grid", [0, 100]);
-      // const newWidth = rect.width / ((xAxisTest1 - xAxisTest) / 100);
-      // const newHeight = rect.height / ((yAxisTest1 - yAxisTest) / 100);
-      // const newX = rect.x / ((xAxisTest1 - xAxisTest) / 100);
-      // const newY = rect.y / ((xAxisTest1 - xAxisTest) / 100);
-      // console.log("x start : ", xAxisStart);
-      const imageWidth = image.width;
-      const imageHeight = image.height;
-      console.log(
-        "img width height ystart yend ",
-        imageWidth,
-        imageHeight,
-        yAxisStart,
-        yAxisEnd
-      );
-      //ปัญหาคือครึ่งบนสลับกับครึ่งล่าง
-      const sx = (xAxisStart / 100) * imageWidth;
-      const sy = ((100 - yAxisEnd) / 100) * imageHeight;
-      const swidth = ((xAxisEnd - xAxisStart) / 100) * imageWidth;
-      const sheight = ((yAxisEnd - yAxisStart) / 100) * imageHeight;
-      console.log(sx, sy, swidth, sheight);
-      tmpCanvas.width = rect.width + rect.x;
-      tmpCanvas.height = rect.height + rect.y;
+        const imageWidth = image.width;
+        const imageHeight = image.height;
 
-      tmpCanvasCtx.drawImage(
-        image,
-        sx,
-        sy,
-        swidth,
-        sheight,
-        rect.x,
-        rect.y,
-        rect.width,
-        rect.height
-      );
+        const sx = (xAxisStart / 100) * imageWidth;
+        const sy = ((100 - yAxisEnd) / 100) * imageHeight;
+        const swidth = ((xAxisEnd - xAxisStart) / 100) * imageWidth;
+        const sheight = ((yAxisEnd - yAxisStart) / 100) * imageHeight;
+        tmpCanvas.width = rect.width + rect.x;
+        tmpCanvas.height = rect.height + rect.y;
 
-      chart.resize();
-      setGrid({
-        show: true,
-        backgroundColor: {
-          image: tmpCanvas,
-          repeat: "no-repeat",
-        },
-      });
+        tmpCanvasCtx.drawImage(
+          image,
+          sx,
+          sy,
+          swidth,
+          sheight,
+          rect.x,
+          rect.y,
+          rect.width,
+          rect.height
+        );
+
+        chart.resize();
+        setGrid({
+          show: true,
+          backgroundColor: {
+            image: tmpCanvas,
+            repeat: "no-repeat",
+          },
+        });
+      };
     }
   };
-
-  useEffect(() => {
-    console.log("grid", grid);
-  }, [grid]);
 
   useEffect(() => {
     updateBackgroundImage();
@@ -307,7 +332,10 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
         z: 10,
         show: true,
         feature: {
-          dataZoom: {},
+          dataZoom: {
+            throttle: 100,
+            icon: null,
+          },
         },
       },
       title: {},
@@ -329,8 +357,8 @@ const StepDrawCurve = ({ xAxis, yAxis, img, onPointUpdate, points }) => {
 
   return (
     <div>
+      <button onClick={handleResetZoom}>resetzoom</button>
       <button onClick={handleSetMode}>swithc</button>
-      <button onClick={handleGetCurve}>curve</button>
       <button onClick={handleClear}>Clear</button>
       DrawCurve
       <ReactECharts

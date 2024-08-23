@@ -240,7 +240,7 @@ const EchartBezierPlot = () => {
       brushId: "\u0000series\u00000\u00000",
       areas: tempBrushData.filter((item) => item.isCheck === true),
       // areas: tempBrushData,
-      // $from: "\u0000series\u00000\u00000", //ไม่รู้ทำอะไรแต้ถ้า commend ไว้จะ display กรอบ
+      // $from: "\u0000series\u00000\u00000",
     });
   }, [tempBrushData, zoom]);
 
